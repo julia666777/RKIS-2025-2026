@@ -1,15 +1,17 @@
-using System;
+﻿using System;
 
 public class UserInfo{
+    /*
+     * Старый код (на всякий случай)
     public static void Main(string[] args){
-        Console.WriteLine("������ ��������� ������� ���� � �������� ���� 3833");
+        Console.WriteLine("Ðàáîòó âûïîëíèëè ×åðíîâà Þëèÿ è Ñîëîâüåâ Èâàí 3833");
 
-        Console.WriteLine("������� ���:");
+        Console.WriteLine("Ââåäèòå èìÿ:");
         string firstName = Console.ReadLine();
 
-        Console.WriteLine("������� �������:");
+        Console.WriteLine("Ââåäèòå ôàìèëèþ:");
         string lastName = Console.ReadLine();
-        Console.WriteLine("������� ��� ��������:");
+        Console.WriteLine("Ââåäèòå ãîä ðîæäåíèÿ:");
         string birthYearString = Console.ReadLine();
 
         int birthYear;
@@ -17,13 +19,129 @@ public class UserInfo{
 
         if (!isBirthYearValid)
         {
-            Console.WriteLine("������: ������������ ��� ��������. ����������, ������� ����� �����.");
+            Console.WriteLine("Îøèáêà: Íåêîððåêòíûé ãîä ðîæäåíèÿ. Ïîæàëóéñòà, ââåäèòå öåëîå ÷èñëî.");
             return;
         }
 
         int currentYear = DateTime.Now.Year;
         int age = currentYear - birthYear;
 
-        Console.WriteLine($"�������� ������������ {firstName} {lastName}, ������� - {age}");
+        Console.WriteLine($"Äîáàâëåí ïîëüçîâàòåëü {firstName} {lastName}, âîçðàñò - {age}");
+    }
+     */
+
+    // Тупо чтобы не городить лишних полей
+    struct UserData
+    {
+        public string firstName, lastName, birthYearString;
+        public int currentYear, age, birthYear;
+    }
+
+    // По порядку задач
+    // 1. Продолжайте работу в проекте TodoList, созданном ранее
+    // 2. Создайте массив строк todos , в котором будут храниться задачи.
+    private static string[] totos;
+    private static UserData userData = new UserData();
+    private static bool isProgramRunning = true;
+
+
+    // 4. Реализуйте следующие команды:
+    // Далее тупо реализации всех комманд
+    private static void DoHelp()
+    {
+        Console.WriteLine("****\tUserInfo Помощник\t****");
+        Console.WriteLine("profile — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
+        Console.WriteLine("add — добавляет новую задачу. Формат ввода: add \"текст задачи\"");
+        Console.WriteLine("view — выводит все задачи из массива (только непустые элементы).");
+        Console.WriteLine("exit — завершает цикл и останавливает выполнение программы.");
+    }
+
+    private static void DoExit() => isProgramRunning = false;
+
+    private static void DoAdd()
+    {
+        // TODO: Это чутка позже...
+    }
+
+    private static void DoProfile()
+    {
+        Console.WriteLine($"User Data: \"{userData.firstName}\" \"{userData.lastName}\", {userData.birthYear}");
+    }
+
+    private static void DoView()
+    {
+        // TODO: Тоже чутка позже...
+    }
+
+
+    // Эта байда обрабатывает комманду введенную юзером
+    private static void ProcessCommand(string command)
+    {
+        if (command == "help")
+        { 
+            DoHelp();
+            return;
+        }
+
+        if (command == "exit")
+        {
+            DoExit();
+            return;
+        }
+
+        if (command == "add")
+        {
+            DoAdd();
+            return;
+        }
+
+        if (command == "profile")
+        {
+            DoProfile();
+            return;
+        }
+
+        if (command == "view")
+        {
+            DoView();
+            return;
+        }
+
+        Console.WriteLine("Неизвестная комманда!");
+    }
+
+    public static void Main(string[] args){
+        Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
+
+        Console.WriteLine("Введите имя:");
+        userData.firstName = Console.ReadLine();
+
+        Console.WriteLine("Введите фамилию:");
+        userData.lastName = Console.ReadLine();
+        Console.WriteLine("Введите год рождения:");
+        userData.birthYearString = Console.ReadLine();
+
+        bool isBirthYearValid = int.TryParse(userData.birthYearString, out userData.birthYear);
+
+        if (!isBirthYearValid)
+        {
+            Console.WriteLine("Ошибка: Некорректный год рождения. Пожалуйста, введите целое число.");
+            return;
+        }
+
+        userData.currentYear = DateTime.Now.Year;
+        userData.age = userData.currentYear - userData.birthYear;
+
+        Console.WriteLine($"Добавлен пользователь {userData.firstName} {userData.lastName}, возраст - {userData.age}");
+
+        // 3. Сделайте бесконечный цикл, в котором будет проверяться введённая пользователем команда.
+        while (isProgramRunning)
+        {
+            // Получаем комманду от юзера
+            var command = Console.ReadLine();
+
+            // И ее обрабатываем
+            ProcessCommand(command);
+        }
     }
 }
