@@ -40,13 +40,17 @@ public class UserInfo{
     // По порядку задач
     // 1. Продолжайте работу в проекте TodoList, созданном ранее
     // 2. Создайте массив строк todos , в котором будут храниться задачи.
-    private static string[] totos;
+    private static string[] todos;
+    private static int todosCount, todosLen;
+
     private static UserData userData = new UserData();
     private static bool isProgramRunning = true;
 
+    private static int todosStartLen = 2;
+
 
     // 4. Реализуйте следующие команды:
-    // Далее тупо реализации всех комманд
+    // Далее реализации всех комманд
     private static void DoHelp()
     {
         Console.WriteLine("****\tUserInfo Помощник\t****");
@@ -58,9 +62,40 @@ public class UserInfo{
 
     private static void DoExit() => isProgramRunning = false;
 
-    private static void DoAdd()
+    private static void DoAdd(string command)
     {
-        // TODO: Это чутка позже...
+        string newTodo = "";
+        int newTodosCount = todosCount + 1;
+        var task = command.Split("add ");
+
+        foreach (var item in task)
+        {
+            newTodo += item;
+        }
+
+        Console.WriteLine($"Added new task: \"{newTodo}\".");
+
+        // 5. Расширение массива 'todos'
+        if (newTodosCount > todosLen)
+        {
+            int newTodosLen = todosLen * 2;
+            string[] newTodos = new string[newTodosLen];
+
+            for (int i = 0;i < todosCount;i++)
+            {
+                newTodos[i] = todos[i];
+            }
+
+            newTodos[todosCount] = newTodo;
+            todos = newTodos;
+            todosLen = newTodosLen;
+        }
+        else
+        {
+            todos[todosCount] = newTodo;
+        }
+
+        todosCount = newTodosCount;
     }
 
     private static void DoProfile()
@@ -70,7 +105,13 @@ public class UserInfo{
 
     private static void DoView()
     {
-        // TODO: Тоже чутка позже...
+        Console.WriteLine("===========================================================");
+        Console.WriteLine("****\tAll tasks list\t****");
+        for (int i = 0;i < todosCount;i++)
+        {
+            Console.WriteLine($"\t\"{todos[i]}\"");
+        }
+        Console.WriteLine("===========================================================");
     }
 
 
@@ -89,9 +130,9 @@ public class UserInfo{
             return;
         }
 
-        if (command == "add")
+        if (command.StartsWith("add"))
         {
-            DoAdd();
+            DoAdd(command);
             return;
         }
 
@@ -133,6 +174,11 @@ public class UserInfo{
         userData.age = userData.currentYear - userData.birthYear;
 
         Console.WriteLine($"Добавлен пользователь {userData.firstName} {userData.lastName}, возраст - {userData.age}");
+
+        // Инициализация 'todos'
+        todosCount = 0;
+        todosLen = todosStartLen;
+        todos = new string[todosStartLen];
 
         // 3. Сделайте бесконечный цикл, в котором будет проверяться введённая пользователем команда.
         while (isProgramRunning)
