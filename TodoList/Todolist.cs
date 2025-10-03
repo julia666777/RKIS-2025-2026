@@ -1,34 +1,6 @@
 ﻿using System;
 
 public class UserInfo{
-    /*
-     * Старый код (на всякий случай)
-    public static void Main(string[] args){
-        Console.WriteLine("Ðàáîòó âûïîëíèëè ×åðíîâà Þëèÿ è Ñîëîâüåâ Èâàí 3833");
-
-        Console.WriteLine("Ââåäèòå èìÿ:");
-        string firstName = Console.ReadLine();
-
-        Console.WriteLine("Ââåäèòå ôàìèëèþ:");
-        string lastName = Console.ReadLine();
-        Console.WriteLine("Ââåäèòå ãîä ðîæäåíèÿ:");
-        string birthYearString = Console.ReadLine();
-
-        int birthYear;
-        bool isBirthYearValid = int.TryParse(birthYearString, out birthYear);
-
-        if (!isBirthYearValid)
-        {
-            Console.WriteLine("Îøèáêà: Íåêîððåêòíûé ãîä ðîæäåíèÿ. Ïîæàëóéñòà, ââåäèòå öåëîå ÷èñëî.");
-            return;
-        }
-
-        int currentYear = DateTime.Now.Year;
-        int age = currentYear - birthYear;
-
-        Console.WriteLine($"Äîáàâëåí ïîëüçîâàòåëü {firstName} {lastName}, âîçðàñò - {age}");
-    }
-     */
 
     // Тупо чтобы не городить лишних полей
     struct UserData
