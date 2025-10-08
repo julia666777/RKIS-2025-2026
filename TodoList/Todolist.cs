@@ -2,72 +2,78 @@
 
 public class UserInfo{
 
-    // Тупо чтобы не городить лишних полей
     struct UserData
     {
         public string firstName, lastName, birthYearString;
         public int currentYear, age, birthYear;
     }
 
-    // По порядку задач
-    // 1. Продолжайте работу в проекте TodoList, созданном ранее
-    // 2. Создайте массив строк todos , в котором будут храниться задачи.
     private static string[] todos;
     private static int todosCount, todosLen;
-
     private static UserData userData = new UserData();
     private static bool isProgramRunning = true;
-
     private static int todosStartLen = 2;
 
 
-    // 4. Реализуйте следующие команды:
-    // Далее реализации всех комманд
+    private const string COMMAND_ADD_NAME = "add";
+    private const string COMMAND_PROFILE_NAME = "profile";
+    private const string COMMAND_VIEW_NAME = "view";
+    private const string COMMAND_EXIT_NAME = "exit";
+    private const string COMMAND_HELP_NAME = "help";
+
+
     private static void DoHelp()
     {
         Console.WriteLine("****\tUserInfo Помощник\t****");
-        Console.WriteLine("profile — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
-        Console.WriteLine("add — добавляет новую задачу. Формат ввода: add \"текст задачи\"");
-        Console.WriteLine("view — выводит все задачи из массива (только непустые элементы).");
-        Console.WriteLine("exit — завершает цикл и останавливает выполнение программы.");
+        Console.WriteLine($"{COMMAND_PROFILE_NAME} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
+        Console.WriteLine($"{COMMAND_ADD_NAME} — добавляет новую задачу. Формат ввода: add \"текст задачи\"");
+        Console.WriteLine($"{COMMAND_VIEW_NAME} — выводит все задачи из массива (только непустые элементы).");
+        Console.WriteLine($"{COMMAND_EXIT_NAME} — завершает цикл и останавливает выполнение программы.");
     }
 
     private static void DoExit() => isProgramRunning = false;
 
-    private static void DoAdd(string command)
+
+    private static void InsertNewTask(string task)
     {
-        string newTodo = "";
         int newTodosCount = todosCount + 1;
-        var task = command.Split("add ");
 
-        foreach (var item in task)
-        {
-            newTodo += item;
-        }
-
-        Console.WriteLine($"Added new task: \"{newTodo}\".");
-
-        // 5. Расширение массива 'todos'
+        // Расширение массива 'todos'
         if (newTodosCount > todosLen)
         {
             int newTodosLen = todosLen * 2;
             string[] newTodos = new string[newTodosLen];
 
-            for (int i = 0;i < todosCount;i++)
+            for (int i = 0; i < todosCount; i++)
             {
                 newTodos[i] = todos[i];
             }
 
-            newTodos[todosCount] = newTodo;
+            newTodos[todosCount] = task;
             todos = newTodos;
             todosLen = newTodosLen;
         }
         else
         {
-            todos[todosCount] = newTodo;
+            todos[todosCount] = task;
         }
 
         todosCount = newTodosCount;
+    }
+
+    private static void DoAdd(string command)
+    {
+        string newTask = "";
+        var userEnteredTask = command.Split($"{COMMAND_ADD_NAME} ");
+
+        foreach (var item in userEnteredTask)
+        {
+            newTask += item;
+        }
+
+        InsertNewTask(newTask);
+
+        Console.WriteLine($"Added new task: \"{newTask}\".");
     }
 
     private static void DoProfile()
@@ -90,40 +96,46 @@ public class UserInfo{
     // Эта байда обрабатывает комманду введенную юзером
     private static void ProcessCommand(string command)
     {
-        if (command == "help")
+        // Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа,
+        // а эта завершается
+
+        if (command == COMMAND_HELP_NAME)
         { 
             DoHelp();
             return;
         }
 
-        if (command == "exit")
+        if (command == COMMAND_EXIT_NAME)
         {
             DoExit();
             return;
         }
 
-        if (command.StartsWith("add"))
+        if (command.StartsWith(COMMAND_ADD_NAME))
         {
             DoAdd(command);
             return;
         }
 
-        if (command == "profile")
+        if (command == COMMAND_PROFILE_NAME)
         {
             DoProfile();
             return;
         }
 
-        if (command == "view")
+        if (command == COMMAND_VIEW_NAME)
         {
             DoView();
             return;
         }
 
+        // Если ни одна комманда не распознана
         Console.WriteLine("Неизвестная комманда!");
     }
 
-    public static void Main(string[] args){
+    // Получение данных пользователя и их обработка 
+    private static void InitializeUserData()
+    {
         Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
 
         Console.WriteLine("Введите имя:");
@@ -146,19 +158,21 @@ public class UserInfo{
         userData.age = userData.currentYear - userData.birthYear;
 
         Console.WriteLine($"Добавлен пользователь {userData.firstName} {userData.lastName}, возраст - {userData.age}");
+    }
+
+
+    public static void Main(string[] args){
+        InitializeUserData();
 
         // Инициализация 'todos'
         todosCount = 0;
         todosLen = todosStartLen;
         todos = new string[todosStartLen];
 
-        // 3. Сделайте бесконечный цикл, в котором будет проверяться введённая пользователем команда.
         while (isProgramRunning)
         {
-            // Получаем комманду от юзера
             var command = Console.ReadLine();
 
-            // И ее обрабатываем
             ProcessCommand(command);
         }
     }
