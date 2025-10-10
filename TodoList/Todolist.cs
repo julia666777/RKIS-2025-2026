@@ -9,6 +9,9 @@ public class UserInfo{
     }
 
     private static string[] todos;
+    private static bool[] statuses;
+    private static DateTime[] dates;
+
     private static int todosCount, todosLen;
     private static UserData userData = new UserData();
     private static bool isProgramRunning = true;
@@ -20,6 +23,9 @@ public class UserInfo{
     private const string COMMAND_VIEW_NAME = "view";
     private const string COMMAND_EXIT_NAME = "exit";
     private const string COMMAND_HELP_NAME = "help";
+    private const string COMMAND_DONE_NAME = "done";
+    private const string COMMAND_DELETE_NAME = "delete";
+    private const string COMMAND_UPDATE_NAME = "update";
 
 
     private static void DoHelp()
@@ -29,6 +35,9 @@ public class UserInfo{
         Console.WriteLine($"{COMMAND_ADD_NAME} — добавляет новую задачу. Формат ввода: add \"текст задачи\"");
         Console.WriteLine($"{COMMAND_VIEW_NAME} — выводит все задачи из массива (только непустые элементы).");
         Console.WriteLine($"{COMMAND_EXIT_NAME} — завершает цикл и останавливает выполнение программы.");
+        Console.WriteLine($"{COMMAND_DONE_NAME} — отмечает задачу выполненной.");
+        Console.WriteLine($"{COMMAND_DELETE_NAME} — <idx> — удаляет задачу по индексу.");
+        Console.WriteLine($"{COMMAND_UPDATE_NAME} — <idx> \"new_text\" — обновляет текст задачи.");
     }
 
     private static void DoExit() => isProgramRunning = false;
@@ -42,20 +51,33 @@ public class UserInfo{
         if (newTodosCount > todosLen)
         {
             int newTodosLen = todosLen * 2;
+
             string[] newTodos = new string[newTodosLen];
+            bool[] newStatuses = new bool[newTodosLen];
+            DateTime[] newDates = new DateTime[newTodosLen];
 
             for (int i = 0; i < todosCount; i++)
             {
                 newTodos[i] = todos[i];
+                newStatuses[i] = statuses[i];
+                newDates[i] = dates[i];
             }
 
             newTodos[todosCount] = task;
+            newDates[todosCount] = DateTime.Now;
+            newStatuses[todosCount] = false;
+
             todos = newTodos;
+            statuses = newStatuses;
+            dates = newDates;
+
             todosLen = newTodosLen;
         }
         else
         {
             todos[todosCount] = task;
+            dates[todosCount] = DateTime.Now;
+            statuses[todosCount] = false;
         }
 
         todosCount = newTodosCount;
@@ -85,11 +107,29 @@ public class UserInfo{
     {
         Console.WriteLine("===========================================================");
         Console.WriteLine("****\tAll tasks list\t****");
+
         for (int i = 0;i < todosCount;i++)
         {
-            Console.WriteLine($"\t\"{todos[i]}\"");
+            string isDone = statuses[i] ? "сделано" : "не сделано";
+            Console.WriteLine($"\t\"{i}\", \"{todos[i]}\", \"{isDone}\", \"{dates[i].ToString()}\"");
         }
+
         Console.WriteLine("===========================================================");
+    }
+
+    private static void DoDone(string command)
+    {
+
+    }
+
+    private static void DoDelete(string command)
+    {
+
+    }
+
+    private static void DoUpdate(string command)
+    {
+
     }
 
 
@@ -129,6 +169,24 @@ public class UserInfo{
             return;
         }
 
+        if (command.StartsWith(COMMAND_DONE_NAME))
+        {
+            DoDone(command);
+            return;
+        }
+
+        if (command.StartsWith(COMMAND_DELETE_NAME))
+        {
+            DoDelete(command);
+            return;
+        }
+
+        if (command.StartsWith(COMMAND_UPDATE_NAME))
+        {
+            DoUpdate(command);
+            return;
+        }
+
         // Если ни одна комманда не распознана
         Console.WriteLine("Неизвестная комманда!");
     }
@@ -161,13 +219,20 @@ public class UserInfo{
     }
 
 
-    public static void Main(string[] args){
-        InitializeUserData();
-
-        // Инициализация 'todos'
+    private static void InitializeTasksData()
+    {
         todosCount = 0;
         todosLen = todosStartLen;
+
         todos = new string[todosStartLen];
+        statuses = new bool[todosStartLen];
+        dates = new DateTime[todosStartLen];
+    }
+
+
+    public static void Main(string[] args){
+        InitializeUserData();
+        InitializeTasksData();
 
         while (isProgramRunning)
         {
