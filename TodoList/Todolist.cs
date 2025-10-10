@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 public class UserInfo{
 
@@ -117,19 +118,52 @@ public class UserInfo{
         Console.WriteLine("===========================================================");
     }
 
+
+    private static int ReadIndexFromCommand(string commandName, string command)
+    {
+        var items = command.Split(commandName);
+        Debug.Assert(items.Length >= 2);
+
+        bool indexValid = int.TryParse(items[1], out int index);
+        Debug.Assert(indexValid);
+
+        return index;
+    }
+
     private static void DoDone(string command)
     {
-
+        int index = ReadIndexFromCommand(COMMAND_DONE_NAME, command);
+        statuses[index] = true;
+        Console.WriteLine($"Task at {index} done.");
     }
 
     private static void DoDelete(string command)
     {
+        int index = ReadIndexFromCommand(COMMAND_DELETE_NAME, command);
+
+        // TODO: delete task at index
 
     }
 
     private static void DoUpdate(string command)
     {
+        var args = command.Split(' ', StringSplitOptions.TrimEntries);
+        Debug.Assert(args.Length >= 2);
 
+        bool indexValid = int.TryParse(args[1], out int index);
+        Debug.Assert(indexValid);
+        Debug.Assert(index >= 0 && index < todosCount);
+
+        string newTodo = "";
+        for (int i = 2; i < args.Length; i++)
+        {
+            newTodo += args[i];
+            newTodo += " ";
+        }
+        newTodo = newTodo.Remove(newTodo.Length - 1);
+
+        todos[index] = newTodo;
+        Console.WriteLine($"Task at {index} changed to \"{todos[index]}\".");
     }
 
 
