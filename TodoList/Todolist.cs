@@ -161,7 +161,25 @@ public class Program
 
         int index = ReadIndexFromCommand(COMMAND_DELETE_NAME, command);
 
-        // TODO: delete task at index
+        var newTodos = todos;
+        var newStatuses = statuses;
+        var newDates = dates;
+
+        for (int i = index;i< todosCount; i++)
+        {
+            newTodos[i - 1] = todos[i];
+            newStatuses[i - 1] = statuses[i];
+            newDates[i - 1] = dates[i];
+        }
+
+        newTodos[todosCount - 1] = null;
+        newStatuses[todosCount - 1] = false;
+        newDates[todosCount - 1] = new DateTime();
+
+        todos = newTodos;
+        statuses = newStatuses;
+        dates = newDates;
+        todosCount--;
     }
 
     private static void UpdateTaskStatus(string command)
