@@ -1,7 +1,7 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-public class UserInfo{
+public class Program 
+{
 
     struct UserData
     {
@@ -29,7 +29,21 @@ public class UserInfo{
     private const string COMMAND_UPDATE_NAME = "update";
 
 
-    private static void DoHelp()
+    public static void Main(string[] args)
+    {
+        InitializeUserData();
+        InitializeTasksData();
+
+        while (isProgramRunning)
+        {
+            var command = Console.ReadLine();
+
+            ProcessCommand(command);
+        }
+    }
+
+
+    private static void ShowHelpInfo()
     {
         Console.WriteLine("****\tUserInfo Помощник\t****");
         Console.WriteLine($"{COMMAND_PROFILE_NAME} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
@@ -41,7 +55,7 @@ public class UserInfo{
         Console.WriteLine($"{COMMAND_UPDATE_NAME} — <idx> \"new_text\" — обновляет текст задачи.");
     }
 
-    private static void DoExit() => isProgramRunning = false;
+    private static void ExitProgram() => isProgramRunning = false;
 
 
     private static void InsertNewTask(string task)
@@ -84,7 +98,7 @@ public class UserInfo{
         todosCount = newTodosCount;
     }
 
-    private static void DoAdd(string command)
+    private static void AddNewTaskFromCommand(string command)
     {
         string newTask = "";
         var userEnteredTask = command.Split($"{COMMAND_ADD_NAME} ");
@@ -99,12 +113,12 @@ public class UserInfo{
         Console.WriteLine($"Added new task: \"{newTask}\".");
     }
 
-    private static void DoProfile()
+    private static void ShowProfileInfo()
     {
         Console.WriteLine($"User Data: \"{userData.firstName}\" \"{userData.lastName}\", {userData.birthYear}");
     }
 
-    private static void DoView()
+    private static void ViewTasksInfo()
     {
         Console.WriteLine("===========================================================");
         Console.WriteLine("****\tAll tasks list\t****");
@@ -130,39 +144,56 @@ public class UserInfo{
         return index;
     }
 
-    private static void DoDone(string command)
+    private static void DoneTask(string command)
     {
         int index = ReadIndexFromCommand(COMMAND_DONE_NAME, command);
         statuses[index] = true;
         Console.WriteLine($"Task at {index} done.");
     }
 
-    private static void DoDelete(string command)
+    private static void DeleteTask(string command)
     {
+        if (todosCount == 0)
+        {
+            Console.WriteLine("Thare is no tasks to delete.");
+            return;
+        }
+
         int index = ReadIndexFromCommand(COMMAND_DELETE_NAME, command);
 
         // TODO: delete task at index
-
     }
 
-    private static void DoUpdate(string command)
+    private static void UpdateTaskStatus(string command)
     {
-        var args = command.Split(' ', StringSplitOptions.TrimEntries);
-        Debug.Assert(args.Length >= 2);
+        var args = command.Split(' ');
+        Console.WriteLine($"{COMMAND_UPDATE_NAME}: uncorrect command format.");
 
         bool indexValid = int.TryParse(args[1], out int index);
-        Debug.Assert(indexValid);
-        Debug.Assert(index >= 0 && index < todosCount);
-
-        string newTodo = "";
-        for (int i = 2; i < args.Length; i++)
+        if (!indexValid)
         {
-            newTodo += args[i];
-            newTodo += " ";
+            Console.WriteLine($"{COMMAND_UPDATE_NAME}: Invalid task index.");
+            return;
         }
-        newTodo = newTodo.Remove(newTodo.Length - 1);
+        
+        if (index < 0 && index > todosCount)
+        { 
+            Console.WriteLine($"{COMMAND_UPDATE_NAME}: There is no task at index {index}.");
+            return;
+        }
 
-        todos[index] = newTodo;
+        /*
+         * Since in the command text the 0th argument is the command, 
+         * the 1st argument is the command index, 
+         * then accordingly the command text starts from the 2nd number.
+         */
+        string newTaskText = args[2];
+        for (int i = 3; i < args.Length; i++)
+        {
+            newTaskText += " " + args[i];
+        }
+
+        todos[index] = newTaskText;
         Console.WriteLine($"Task at {index} changed to \"{todos[index]}\".");
     }
 
@@ -175,49 +206,49 @@ public class UserInfo{
 
         if (command == COMMAND_HELP_NAME)
         { 
-            DoHelp();
+            ShowHelpInfo();
             return;
         }
 
         if (command == COMMAND_EXIT_NAME)
         {
-            DoExit();
+            ExitProgram();
             return;
         }
 
         if (command.StartsWith(COMMAND_ADD_NAME))
         {
-            DoAdd(command);
+            AddNewTaskFromCommand(command);
             return;
         }
 
         if (command == COMMAND_PROFILE_NAME)
         {
-            DoProfile();
+            ShowProfileInfo();
             return;
         }
 
         if (command == COMMAND_VIEW_NAME)
         {
-            DoView();
+            ViewTasksInfo();
             return;
         }
 
         if (command.StartsWith(COMMAND_DONE_NAME))
         {
-            DoDone(command);
+            DoneTask(command);
             return;
         }
 
         if (command.StartsWith(COMMAND_DELETE_NAME))
         {
-            DoDelete(command);
+            DeleteTask(command);
             return;
         }
 
         if (command.StartsWith(COMMAND_UPDATE_NAME))
         {
-            DoUpdate(command);
+            UpdateTaskStatus(command);
             return;
         }
 
@@ -263,16 +294,4 @@ public class UserInfo{
         dates = new DateTime[todosStartLen];
     }
 
-
-    public static void Main(string[] args){
-        InitializeUserData();
-        InitializeTasksData();
-
-        while (isProgramRunning)
-        {
-            var command = Console.ReadLine();
-
-            ProcessCommand(command);
-        }
-    }
 }
