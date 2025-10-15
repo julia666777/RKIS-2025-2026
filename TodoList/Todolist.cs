@@ -222,13 +222,13 @@ public class Program
         // Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа,
         // а эта завершается
 
-        if (command == COMMAND_HELP_NAME)
+        if (command.StartsWith(COMMAND_HELP_NAME))
         { 
             ShowHelpInfo();
             return;
         }
 
-        if (command == COMMAND_EXIT_NAME)
+        if (command.StartsWith(COMMAND_EXIT_NAME))
         {
             ExitProgram();
             return;
@@ -240,13 +240,13 @@ public class Program
             return;
         }
 
-        if (command == COMMAND_PROFILE_NAME)
+        if (command.StartsWith(COMMAND_PROFILE_NAME))
         {
             ShowProfileInfo();
             return;
         }
 
-        if (command == COMMAND_VIEW_NAME)
+        if (command.StartsWith(COMMAND_VIEW_NAME))
         {
             ViewTasksInfo();
             return;
