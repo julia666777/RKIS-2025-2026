@@ -2,6 +2,13 @@
 
 public class Program 
 {
+    private enum ProgramWorkMode
+    {
+        ProcessingCommands,
+        AddingTask,
+    }
+
+    private static ProgramWorkMode programMode;
 
     struct UserData
     {
@@ -28,6 +35,13 @@ public class Program
     private const string COMMAND_DELETE_NAME = "delete";
     private const string COMMAND_UPDATE_NAME = "update";
 
+    private static string[] COMMAND_ADD_MULTILINE_FLAGS = new string[]
+    {
+        "--multiline",
+        "-m"
+    };
+    private static string addingMultilineTask;
+
 
     public static void Main(string[] args)
     {
@@ -36,10 +50,26 @@ public class Program
 
         while (isProgramRunning)
         {
-            var command = Console.ReadLine();
+            var commandLine = Console.ReadLine();
 
-            ProcessCommand(command);
+            switch (programMode)
+            {
+                case ProgramWorkMode.ProcessingCommands:
+                    ProcessCommand(commandLine);
+                    break;
+                case ProgramWorkMode.AddingTask:
+                    AddNewTaskLine(commandLine);
+                    break;
+            }
+
         }
+    }
+
+
+    private static void EnterDefaultProgramMode()
+    {
+        programMode = ProgramWorkMode.ProcessingCommands;
+        addingMultilineTask = "";
     }
 
 
@@ -98,10 +128,26 @@ public class Program
         todosCount = newTodosCount;
     }
 
+
+    private static void EnterMultilineTaskReadingMode()
+    {
+        programMode = ProgramWorkMode.AddingTask;
+    }
+
     private static void AddNewTaskFromCommand(string command)
     {
         string newTask = "";
         var userEnteredTask = command.Split($"{COMMAND_ADD_NAME} ");
+
+        // checking for flags
+        foreach (var i in COMMAND_ADD_MULTILINE_FLAGS)
+        {
+            if (userEnteredTask.Contains(i))
+            {
+                EnterMultilineTaskReadingMode();
+                return;
+            }
+        }
 
         foreach (var item in userEnteredTask)
         {
@@ -126,7 +172,7 @@ public class Program
         for (int i = 0;i < todosCount;i++)
         {
             string isDone = statuses[i] ? "сделано" : "не сделано";
-            Console.WriteLine($"\t\"{i}\", \"{todos[i]}\", \"{isDone}\", \"{dates[i].ToString()}\"");
+            Console.WriteLine($"\"{i}\", \"{todos[i]}\", \"{isDone}\", \"{dates[i].ToString()}\"\n");
         }
 
         Console.WriteLine("===========================================================");
@@ -310,6 +356,19 @@ public class Program
         todos = new string[todosStartLen];
         statuses = new bool[todosStartLen];
         dates = new DateTime[todosStartLen];
+
+        EnterDefaultProgramMode();
+    }
+
+    private static void AddNewTaskLine(string commandLine)
+    {
+        if (commandLine.StartsWith("!end"))
+        {
+            AddNewTaskFromCommand(addingMultilineTask);
+            EnterDefaultProgramMode();
+        }
+
+        addingMultilineTask += commandLine + "\n";
     }
 
 }
