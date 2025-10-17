@@ -47,9 +47,23 @@ public class Program
 	{
 		"--index", "-i"
 	};
+	private static string[] COMMAND_VIEW_STATUS_FLAGS = new string[]
+	{
+		"--status", "-s"
+	};
+	private static string[] COMMAND_VIEW_UPDATE_FLAGS = new string[]
+	{
+		"--update-date", "-d"
+	};
+	private static string[] COMMAND_VIEW_ALL_FLAGS = new string[]
+	{
+		"--all", "-a"
+	};
+
+	private const int MAX_TASK_TEXT_DISPLAY_LEN = 30;
 
 
-    public static void Main(string[] args)
+	public static void Main(string[] args)
     {
         InitializeUserData();
         InitializeTasksData();
@@ -173,13 +187,43 @@ public class Program
 
     private static void ViewTasksInfo(string command)
     {
+		bool indexed = false, statused = false, update = false, all = false;
+
         Console.WriteLine("===========================================================");
-        Console.WriteLine("****\tTask,s info\t****");
+        Console.WriteLine("****\tИнформация о задачах\t****");
+
+		foreach (var i in COMMAND_VIEW_INDEX_FLAGS)
+			indexed = command.Contains(i);
+
+		foreach (var i in COMMAND_VIEW_STATUS_FLAGS)
+			statused = command.Contains(i);
+
+		foreach (var i in COMMAND_VIEW_UPDATE_FLAGS)
+			update = command.Contains(i);
+
+		foreach (var i in COMMAND_VIEW_ALL_FLAGS)
+			all = command.Contains(i);
 
 		for (int i = 0; i < todosCount; i++)
 		{
-			string isDone = statuses[i] ? "сделано" : "не сделано";
-			Console.WriteLine($"\"{i}\", \"{todos[i]}\", \"{isDone}\", \"{dates[i].ToString()}\"\n");
+			string textOfView = "";
+
+			if (indexed || all)
+				textOfView += $"индекс: \"{i}\"";
+
+			if (statused || all)
+			{
+				string isDone = statuses[i] ? "сделано" : "не сделано";
+				textOfView += $"\tстатус: \"{isDone}\""; 
+			}
+
+			if (update || all)
+				textOfView += $"\tдата обновления: \"{dates[i]}\"";
+
+			string taskText = todos[i].Length <= MAX_TASK_TEXT_DISPLAY_LEN ? todos[i] : (todos[i].Substring(0, MAX_TASK_TEXT_DISPLAY_LEN) + "...");
+			textOfView += $"\t задача: \"{taskText}\"";
+
+			Console.WriteLine(textOfView);
 		}
 
 		Console.WriteLine("===========================================================");
