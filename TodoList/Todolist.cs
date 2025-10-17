@@ -26,43 +26,43 @@ public class Program
     private static int todosStartLen = 2;
 
 
-    private const string COMMAND_ADD_NAME = "add";
-    private const string COMMAND_PROFILE_NAME = "profile";
-    private const string COMMAND_VIEW_NAME = "view";
-    private const string COMMAND_EXIT_NAME = "exit";
-    private const string COMMAND_HELP_NAME = "help";
-    private const string COMMAND_DONE_NAME = "done";
-    private const string COMMAND_DELETE_NAME = "delete";
-    private const string COMMAND_UPDATE_NAME = "update";
-    private const string COMMAND_READ_NAME = "read";
+    private const string CommandAddName = "add";
+    private const string CommandProfileName = "profile";
+    private const string CommandViewName = "view";
+    private const string CommandExitName = "exit";
+    private const string CommandHelpName = "help";
+    private const string CommandDoneName = "done";
+    private const string CommandDeleteName = "delete";
+    private const string CommandUpdateName = "update";
+    private const string CommandReadName = "read";
 
-    private const string COMMAND_END_NAME = "!end";
+    private const string CommandEndName = "!end";
 
-    private static string[] COMMAND_ADD_MULTILINE_FLAGS = new string[]
+    private static string[] CommandAddMultilineFlags = new string[]
     {
         "--multiline",
         "-m"
     };
     private static string addingMultilineTask;
 
-	private static string[] COMMAND_VIEW_INDEX_FLAGS = new string[]
+	private static string[] CommandViewIndexFlags = new string[]
 	{
 		"--index", "-i"
 	};
-	private static string[] COMMAND_VIEW_STATUS_FLAGS = new string[]
+	private static string[] CommandViewStatusFlags = new string[]
 	{
 		"--status", "-s"
 	};
-	private static string[] COMMAND_VIEW_UPDATE_FLAGS = new string[]
+	private static string[] CommandViewUpdateFlags = new string[]
 	{
 		"--update-date", "-d"
 	};
-	private static string[] COMMAND_VIEW_ALL_FLAGS = new string[]
+	private static string[] CommandViewAllFlags = new string[]
 	{
 		"--all", "-a"
 	};
 
-	private const int MAX_TASK_TEXT_DISPLAY_LEN = 30;
+	private const int MaxTaskDisplayTextLen = 30;
 
 
 	public static void Main(string[] args)
@@ -74,7 +74,7 @@ public class Program
         {
             var commandLine = Console.ReadLine();
 
-            switch (programMode)
+			switch (programMode)
             {
                 case ProgramWorkMode.ProcessingCommands:
                     ProcessCommand(commandLine);
@@ -91,7 +91,6 @@ public class Program
     private static void EnterDefaultProgramMode()
     {
         programMode = ProgramWorkMode.ProcessingCommands;
-        addingMultilineTask = "";
     }
 
 
@@ -99,22 +98,22 @@ public class Program
     {
         Console.WriteLine("****\tUserInfo Помощник\t****");
 
-        Console.WriteLine($"{COMMAND_PROFILE_NAME} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
+        Console.WriteLine($"{CommandProfileName} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
 
-        Console.WriteLine($"{COMMAND_ADD_NAME}" +
-			$" — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {COMMAND_ADD_MULTILINE_FLAGS[0]} или " +
-			$"{COMMAND_ADD_MULTILINE_FLAGS[1]},\n чтобы завершить написание задачи введите {COMMAND_END_NAME}.\n");
+        Console.WriteLine($"{CommandAddName}" +
+			$" — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {CommandAddMultilineFlags[0]} или " +
+			$"{CommandAddMultilineFlags[1]},\n чтобы завершить написание задачи введите {CommandEndName}.\n");
 
-        Console.WriteLine($"{COMMAND_VIEW_NAME} — выводит все задачи из массива (только непустые элементы),\n {COMMAND_VIEW_INDEX_FLAGS[0]} или {COMMAND_VIEW_INDEX_FLAGS[1]} чтобы вывести индексы задач,\n" +
-			$"{COMMAND_VIEW_STATUS_FLAGS[0]} или {COMMAND_VIEW_STATUS_FLAGS[1]} чтобы отобразть статусы задач,\n" +
-			$"{COMMAND_VIEW_UPDATE_FLAGS[0]} или {COMMAND_VIEW_UPDATE_FLAGS[1]} чтобы узреть дату внесения последнего изменения\n" +
-			$"{COMMAND_VIEW_ALL_FLAGS[0]} или {COMMAND_VIEW_ALL_FLAGS[1]} чтобы показать всю дополнительную информацию.\n");
+        Console.WriteLine($"{CommandViewName} — выводит все задачи из массива (только непустые элементы),\n {CommandViewIndexFlags[0]} или {CommandViewIndexFlags[1]} чтобы вывести индексы задач,\n" +
+			$"{CommandViewStatusFlags[0]} или {CommandViewStatusFlags[1]} чтобы отобразть статусы задач,\n" +
+			$"{CommandViewUpdateFlags[0]} или {CommandViewUpdateFlags[1]} чтобы узреть дату внесения последнего изменения\n" +
+			$"{CommandViewAllFlags[0]} или {CommandViewAllFlags[1]} чтобы показать всю дополнительную информацию.\n");
 
-        Console.WriteLine($"{COMMAND_EXIT_NAME} — завершает цикл и останавливает выполнение программы.");
-        Console.WriteLine($"{COMMAND_DONE_NAME} — отмечает задачу выполненной.");
-        Console.WriteLine($"{COMMAND_DELETE_NAME} — <idx> — удаляет задачу по индексу.");
-        Console.WriteLine($"{COMMAND_UPDATE_NAME} — <idx> \"new_text\" — обновляет текст задачи.");
-        Console.WriteLine($"{COMMAND_READ_NAME} — <idx> выводит полный текст задачи, ее статус, и дату последнего изменения.");
+        Console.WriteLine($"{CommandExitName} — завершает цикл и останавливает выполнение программы.");
+        Console.WriteLine($"{CommandDoneName} — отмечает задачу выполненной.");
+        Console.WriteLine($"{CommandDeleteName} — <idx> — удаляет задачу по индексу.");
+        Console.WriteLine($"{CommandUpdateName} — <idx> \"new_text\" — обновляет текст задачи.");
+        Console.WriteLine($"{CommandReadName} — <idx> выводит полный текст задачи, ее статус, и дату последнего изменения.");
     }
 
     private static void ExitProgram() => isProgramRunning = false;
@@ -164,15 +163,16 @@ public class Program
     private static void EnterMultilineTaskReadingMode()
     {
         programMode = ProgramWorkMode.AddingTask;
-    }
+		addingMultilineTask = "";
+	}
 
-    private static void AddNewTaskFromCommand(string command)
+	private static void AddNewTaskFromCommand(string command)
     {
         string newTask = "";
-        var userEnteredTask = command.Split($"{COMMAND_ADD_NAME} ");
+        var userEnteredTask = command.Split($"{CommandAddName} ");
 
         // checking for flags
-        foreach (var i in COMMAND_ADD_MULTILINE_FLAGS)
+        foreach (var i in CommandAddMultilineFlags)
         {
             if (userEnteredTask.Contains(i))
             {
@@ -203,16 +203,16 @@ public class Program
         Console.WriteLine("===========================================================");
         Console.WriteLine("****\tИнформация о задачах\t****");
 
-		foreach (var i in COMMAND_VIEW_INDEX_FLAGS)
+		foreach (var i in CommandViewIndexFlags)
 			indexed = command.Contains(i);
 
-		foreach (var i in COMMAND_VIEW_STATUS_FLAGS)
+		foreach (var i in CommandViewStatusFlags)
 			statused = command.Contains(i);
 
-		foreach (var i in COMMAND_VIEW_UPDATE_FLAGS)
+		foreach (var i in CommandViewUpdateFlags)
 			update = command.Contains(i);
 
-		foreach (var i in COMMAND_VIEW_ALL_FLAGS)
+		foreach (var i in CommandViewAllFlags)
 			all = command.Contains(i);
 
 		for (int i = 0; i < todosCount; i++)
@@ -231,7 +231,7 @@ public class Program
 			if (update || all)
 				textOfView += $"\tдата обновления: \"{dates[i]}\"";
 
-			string taskText = todos[i].Length <= MAX_TASK_TEXT_DISPLAY_LEN ? todos[i] : (todos[i].Substring(0, MAX_TASK_TEXT_DISPLAY_LEN) + "...");
+			string taskText = todos[i].Length <= MaxTaskDisplayTextLen ? todos[i] : (todos[i].Substring(0, MaxTaskDisplayTextLen) + "...");
 			textOfView += $"\t задача: \"{taskText}\"";
 
 			Console.WriteLine(textOfView);
@@ -259,7 +259,7 @@ public class Program
 
     private static void DoneTask(string command)
     {
-        int index = ReadIndexFromCommand(COMMAND_DONE_NAME, command);
+        int index = ReadIndexFromCommand(CommandDoneName, command);
         statuses[index] = true;
 		dates[index] = DateTime.Now;
         Console.WriteLine($"Задача под номером {index} завершена.");
@@ -273,7 +273,7 @@ public class Program
             return;
         }
 
-        int index = ReadIndexFromCommand(COMMAND_DELETE_NAME, command);
+        int index = ReadIndexFromCommand(CommandDeleteName, command);
 
         var newTodos = todos;
         var newStatuses = statuses;
@@ -299,18 +299,18 @@ public class Program
     private static void UpdateTaskText(string command)
     {
         var args = command.Split(' ', 3);
-        Console.WriteLine($"{COMMAND_UPDATE_NAME}: неправельно введена комманда.");
+        Console.WriteLine($"{CommandUpdateName}: неправельно введена комманда.");
 
         bool indexValid = int.TryParse(args[1], out int index);
         if (!indexValid)
         {
-            Console.WriteLine($"{COMMAND_UPDATE_NAME}: не верный индекс задачи.");
+            Console.WriteLine($"{CommandUpdateName}: не верный индекс задачи.");
             return;
         }
         
         if (index < 0 && index > todosCount)
         { 
-            Console.WriteLine($"{COMMAND_UPDATE_NAME}: задачи под номером {index} не существует.");
+            Console.WriteLine($"{CommandUpdateName}: задачи под номером {index} не существует.");
             return;
         }
 
@@ -333,7 +333,7 @@ public class Program
 
 	private static void ReadFullTaskText(string command)
 	{
-		int index = ReadIndexFromCommand(COMMAND_READ_NAME, command);
+		int index = ReadIndexFromCommand(CommandReadName, command);
 
 		Console.WriteLine(todos[index]);
 
@@ -349,39 +349,39 @@ public class Program
     {
 		// Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа
 
-		if (command.StartsWith(COMMAND_HELP_NAME))
+		if (command.StartsWith(CommandHelpName))
 		{
 			ShowHelpInfo();
 		}
-		else if (command.StartsWith(COMMAND_EXIT_NAME))
+		else if (command.StartsWith(CommandExitName))
 		{
 			ExitProgram();
 		}
-		else if (command.StartsWith(COMMAND_ADD_NAME))
+		else if (command.StartsWith(CommandAddName))
 		{
 			AddNewTaskFromCommand(command);
 		}
-		else if (command.StartsWith(COMMAND_PROFILE_NAME))
+		else if (command.StartsWith(CommandProfileName))
 		{
 			ShowProfileInfo();
 		}
-		else if (command.StartsWith(COMMAND_VIEW_NAME))
+		else if (command.StartsWith(CommandViewName))
 		{
 			ViewTasksInfo(command);
 		}
-		else if (command.StartsWith(COMMAND_DONE_NAME))
+		else if (command.StartsWith(CommandDoneName))
 		{
 			DoneTask(command);
 		}
-		else if (command.StartsWith(COMMAND_DELETE_NAME))
+		else if (command.StartsWith(CommandDeleteName))
 		{
 			DeleteTask(command);
 		}
-		else if (command.StartsWith(COMMAND_UPDATE_NAME))
+		else if (command.StartsWith(CommandUpdateName))
 		{
 			UpdateTaskText(command);
 		}
-		else if (command.StartsWith(COMMAND_READ_NAME))
+		else if (command.StartsWith(CommandReadName))
 		{
 			ReadFullTaskText(command);
 		}
@@ -434,7 +434,7 @@ public class Program
 
     private static void AddNewTaskLine(string commandLine)
     {
-        if (commandLine.StartsWith(COMMAND_END_NAME))
+        if (commandLine.StartsWith(CommandEndName))
         {
             AddNewTaskFromCommand(addingMultilineTask);
             EnterDefaultProgramMode();
