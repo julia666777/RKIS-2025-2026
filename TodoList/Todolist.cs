@@ -34,6 +34,7 @@ public class Program
     private const string COMMAND_DONE_NAME = "done";
     private const string COMMAND_DELETE_NAME = "delete";
     private const string COMMAND_UPDATE_NAME = "update";
+    private const string COMMAND_READ_NAME = "read";
 
     private static string[] COMMAND_ADD_MULTILINE_FLAGS = new string[]
     {
@@ -41,6 +42,11 @@ public class Program
         "-m"
     };
     private static string addingMultilineTask;
+
+	private static string[] COMMAND_VIEW_INDEX_FLAGS = new string[]
+	{
+		"--index", "-i"
+	};
 
 
     public static void Main(string[] args)
@@ -164,18 +170,18 @@ public class Program
         Console.WriteLine($"User Data: \"{userData.firstName}\" \"{userData.lastName}\", {userData.birthYear}");
     }
 
-    private static void ViewTasksInfo()
+    private static void ViewTasksInfo(string command)
     {
         Console.WriteLine("===========================================================");
-        Console.WriteLine("****\tAll tasks list\t****");
+        Console.WriteLine("****\tTask,s info\t****");
 
-        for (int i = 0;i < todosCount;i++)
-        {
-            string isDone = statuses[i] ? "сделано" : "не сделано";
-            Console.WriteLine($"\"{i}\", \"{todos[i]}\", \"{isDone}\", \"{dates[i].ToString()}\"\n");
-        }
+		for (int i = 0; i < todosCount; i++)
+		{
+			string isDone = statuses[i] ? "сделано" : "не сделано";
+			Console.WriteLine($"\"{i}\", \"{todos[i]}\", \"{isDone}\", \"{dates[i].ToString()}\"\n");
+		}
 
-        Console.WriteLine("===========================================================");
+		Console.WriteLine("===========================================================");
     }
 
 
@@ -228,7 +234,7 @@ public class Program
         todosCount--;
     }
 
-    private static void UpdateTaskStatus(string command)
+    private static void UpdateTaskText(string command)
     {
         var args = command.Split(' ');
         Console.WriteLine($"{COMMAND_UPDATE_NAME}: uncorrect command format.");
@@ -261,63 +267,58 @@ public class Program
         Console.WriteLine($"Task at {index} changed to \"{todos[index]}\".");
     }
 
+	private static void ReadFullTaskText()
+	{
+
+	}
+
 
     // Эта байда обрабатывает комманду введенную юзером
     private static void ProcessCommand(string command)
     {
-        // Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа,
-        // а эта завершается
+		// Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа
 
-        if (command.StartsWith(COMMAND_HELP_NAME))
-        { 
-            ShowHelpInfo();
-            return;
-        }
-
-        if (command.StartsWith(COMMAND_EXIT_NAME))
-        {
-            ExitProgram();
-            return;
-        }
-
-        if (command.StartsWith(COMMAND_ADD_NAME))
-        {
-            AddNewTaskFromCommand(command);
-            return;
-        }
-
-        if (command.StartsWith(COMMAND_PROFILE_NAME))
-        {
-            ShowProfileInfo();
-            return;
-        }
-
-        if (command.StartsWith(COMMAND_VIEW_NAME))
-        {
-            ViewTasksInfo();
-            return;
-        }
-
-        if (command.StartsWith(COMMAND_DONE_NAME))
-        {
-            DoneTask(command);
-            return;
-        }
-
-        if (command.StartsWith(COMMAND_DELETE_NAME))
-        {
-            DeleteTask(command);
-            return;
-        }
-
-        if (command.StartsWith(COMMAND_UPDATE_NAME))
-        {
-            UpdateTaskStatus(command);
-            return;
-        }
-
-        // Если ни одна комманда не распознана
-        Console.WriteLine("Неизвестная комманда!");
+		if (command.StartsWith(COMMAND_HELP_NAME))
+		{
+			ShowHelpInfo();
+		}
+		else if (command.StartsWith(COMMAND_EXIT_NAME))
+		{
+			ExitProgram();
+		}
+		else if (command.StartsWith(COMMAND_ADD_NAME))
+		{
+			AddNewTaskFromCommand(command);
+		}
+		else if (command.StartsWith(COMMAND_PROFILE_NAME))
+		{
+			ShowProfileInfo();
+		}
+		else if (command.StartsWith(COMMAND_VIEW_NAME))
+		{
+			ViewTasksInfo(command);
+		}
+		else if (command.StartsWith(COMMAND_DONE_NAME))
+		{
+			DoneTask(command);
+		}
+		else if (command.StartsWith(COMMAND_DELETE_NAME))
+		{
+			DeleteTask(command);
+		}
+		else if (command.StartsWith(COMMAND_UPDATE_NAME))
+		{
+			UpdateTaskText(command);
+		}
+		else if (command.StartsWith(COMMAND_READ_NAME))
+		{
+			ReadFullTaskText();
+		}
+		else
+		{
+			// Если ни одна комманда не распознана
+			Console.WriteLine("Неизвестная комманда!");
+		}
     }
 
     // Получение данных пользователя и их обработка 
