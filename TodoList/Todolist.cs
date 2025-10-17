@@ -36,6 +36,8 @@ public class Program
     private const string COMMAND_UPDATE_NAME = "update";
     private const string COMMAND_READ_NAME = "read";
 
+    private const string COMMAND_END_NAME = "!end";
+
     private static string[] COMMAND_ADD_MULTILINE_FLAGS = new string[]
     {
         "--multiline",
@@ -96,9 +98,18 @@ public class Program
     private static void ShowHelpInfo()
     {
         Console.WriteLine("****\tUserInfo Помощник\t****");
+
         Console.WriteLine($"{COMMAND_PROFILE_NAME} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
-        Console.WriteLine($"{COMMAND_ADD_NAME} — добавляет новую задачу. Формат ввода: add \"текст задачи\"");
-        Console.WriteLine($"{COMMAND_VIEW_NAME} — выводит все задачи из массива (только непустые элементы).");
+
+        Console.WriteLine($"{COMMAND_ADD_NAME}" +
+			$" — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {COMMAND_ADD_MULTILINE_FLAGS[0]} или " +
+			$"{COMMAND_ADD_MULTILINE_FLAGS[1]},\n чтобы завершить написание задачи введите {COMMAND_END_NAME}.\n");
+
+        Console.WriteLine($"{COMMAND_VIEW_NAME} — выводит все задачи из массива (только непустые элементы),\n {COMMAND_VIEW_INDEX_FLAGS[0]} или {COMMAND_VIEW_INDEX_FLAGS[1]} чтобы вывести индексы задач,\n" +
+			$"{COMMAND_VIEW_STATUS_FLAGS[0]} или {COMMAND_VIEW_STATUS_FLAGS[1]} чтобы отобразть статусы задач,\n" +
+			$"{COMMAND_VIEW_UPDATE_FLAGS[0]} или {COMMAND_VIEW_UPDATE_FLAGS[1]} чтобы узреть дату внесения последнего изменения\n" +
+			$"{COMMAND_VIEW_ALL_FLAGS[0]} или {COMMAND_VIEW_ALL_FLAGS[1]} чтобы показать всю дополнительную информацию.\n");
+
         Console.WriteLine($"{COMMAND_EXIT_NAME} — завершает цикл и останавливает выполнение программы.");
         Console.WriteLine($"{COMMAND_DONE_NAME} — отмечает задачу выполненной.");
         Console.WriteLine($"{COMMAND_DELETE_NAME} — <idx> — удаляет задачу по индексу.");
@@ -177,12 +188,12 @@ public class Program
 
         InsertNewTask(newTask);
 
-        Console.WriteLine($"Added new task: \"{newTask}\".");
+        Console.WriteLine($"Добавлена новая задача: \"{newTask}\".");
     }
 
     private static void ShowProfileInfo()
     {
-        Console.WriteLine($"User Data: \"{userData.firstName}\" \"{userData.lastName}\", {userData.birthYear}");
+        Console.WriteLine($"Данные пользователя: \"{userData.firstName}\" \"{userData.lastName}\", {userData.birthYear}");
     }
 
     private static void ViewTasksInfo(string command)
@@ -250,14 +261,15 @@ public class Program
     {
         int index = ReadIndexFromCommand(COMMAND_DONE_NAME, command);
         statuses[index] = true;
-        Console.WriteLine($"Task at {index} done.");
+		dates[index] = DateTime.Now;
+        Console.WriteLine($"Задача под номером {index} завершена.");
     }
 
     private static void DeleteTask(string command)
     {
         if (todosCount == 0)
         {
-            Console.WriteLine("Thare is no tasks to delete.");
+            Console.WriteLine("Тут нечего удалять.");
             return;
         }
 
@@ -286,19 +298,19 @@ public class Program
 
     private static void UpdateTaskText(string command)
     {
-        var args = command.Split(' ');
-        Console.WriteLine($"{COMMAND_UPDATE_NAME}: uncorrect command format.");
+        var args = command.Split(' ', 3);
+        Console.WriteLine($"{COMMAND_UPDATE_NAME}: неправельно введена комманда.");
 
         bool indexValid = int.TryParse(args[1], out int index);
         if (!indexValid)
         {
-            Console.WriteLine($"{COMMAND_UPDATE_NAME}: Invalid task index.");
+            Console.WriteLine($"{COMMAND_UPDATE_NAME}: не верный индекс задачи.");
             return;
         }
         
         if (index < 0 && index > todosCount)
         { 
-            Console.WriteLine($"{COMMAND_UPDATE_NAME}: There is no task at index {index}.");
+            Console.WriteLine($"{COMMAND_UPDATE_NAME}: задачи под номером {index} не существует.");
             return;
         }
 
@@ -314,7 +326,9 @@ public class Program
         }
 
         todos[index] = newTaskText;
-        Console.WriteLine($"Task at {index} changed to \"{todos[index]}\".");
+		dates[index] = DateTime.Now;
+
+        Console.WriteLine($"Задача под номером {index} изменена на \"{todos[index]}\".");
     }
 
 	private static void ReadFullTaskText(string command)
@@ -420,7 +434,7 @@ public class Program
 
     private static void AddNewTaskLine(string commandLine)
     {
-        if (commandLine.StartsWith("!end"))
+        if (commandLine.StartsWith(COMMAND_END_NAME))
         {
             AddNewTaskFromCommand(addingMultilineTask);
             EnterDefaultProgramMode();
