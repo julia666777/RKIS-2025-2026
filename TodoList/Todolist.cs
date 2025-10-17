@@ -299,7 +299,6 @@ public class Program
     private static void UpdateTaskText(string command)
     {
         var args = command.Split(' ', 3);
-        Console.WriteLine($"{CommandUpdateName}: неправельно введена комманда.");
 
         bool indexValid = int.TryParse(args[1], out int index);
         if (!indexValid)
@@ -314,18 +313,7 @@ public class Program
             return;
         }
 
-        /*
-         * Since in the command text the 0th argument is the command, 
-         * the 1st argument is the command index, 
-         * then accordingly the command text starts from the 2nd number.
-         */
-        string newTaskText = args[2];
-        for (int i = 3; i < args.Length; i++)
-        {
-            newTaskText += " " + args[i];
-        }
-
-        todos[index] = newTaskText;
+        todos[index] = args[2];
 		dates[index] = DateTime.Now;
 
         Console.WriteLine($"Задача под номером {index} изменена на \"{todos[index]}\".");
