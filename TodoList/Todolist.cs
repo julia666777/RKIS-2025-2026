@@ -89,6 +89,7 @@ public class Program
         Console.WriteLine($"{COMMAND_DONE_NAME} — отмечает задачу выполненной.");
         Console.WriteLine($"{COMMAND_DELETE_NAME} — <idx> — удаляет задачу по индексу.");
         Console.WriteLine($"{COMMAND_UPDATE_NAME} — <idx> \"new_text\" — обновляет текст задачи.");
+        Console.WriteLine($"{COMMAND_READ_NAME} — <idx> выводит полный текст задачи, ее статус, и дату последнего изменения.");
     }
 
     private static void ExitProgram() => isProgramRunning = false;
@@ -185,13 +186,18 @@ public class Program
     }
 
 
-    private static int ReadIndexFromCommand(string commandName, string command)
+    private static int ReadIndexFromCommand(string commandName, string command, bool checkForNumOfTasks = true)
     {
         var items = command.Split(commandName);
         Debug.Assert(items.Length >= 2);
 
         bool indexValid = int.TryParse(items[1], out int index);
         Debug.Assert(indexValid);
+
+		if (checkForNumOfTasks && (index < 0 || index >= todosCount))
+		{
+			throw new Exception($"ReadIndexFromCommand: Uncorrected index {index}!");
+		}
 
         return index;
     }
@@ -267,9 +273,16 @@ public class Program
         Console.WriteLine($"Task at {index} changed to \"{todos[index]}\".");
     }
 
-	private static void ReadFullTaskText()
+	private static void ReadFullTaskText(string command)
 	{
+		int index = ReadIndexFromCommand(COMMAND_READ_NAME, command);
 
+		Console.WriteLine(todos[index]);
+
+		string statusText = statuses[index] ? "выполнена" : "не выполнена";
+		Console.WriteLine($"( {statusText} )");
+
+		Console.WriteLine($"Дата последнего изменения: {dates[index]}");
 	}
 
 
@@ -312,7 +325,7 @@ public class Program
 		}
 		else if (command.StartsWith(COMMAND_READ_NAME))
 		{
-			ReadFullTaskText();
+			ReadFullTaskText(command);
 		}
 		else
 		{
