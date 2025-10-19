@@ -200,14 +200,35 @@ public class Program
 	private static void ViewTasksInfo(string command)
 	{
 		string header = "";
+		string[] userEnteredCommand = command.Split(' ');
 
 		Console.WriteLine("===========================================================");
 		Console.WriteLine("****\tИнформация о задачах\t****");
 
+		// checking for flags
 		bool indexed = LineFlagsFounded(command, CommandViewIndexFlags);
 		bool statused = LineFlagsFounded(command, CommandViewStatusFlags);
 		bool update = LineFlagsFounded(command, CommandViewUpdateFlags);
 		bool all = LineFlagsFounded(command, CommandViewAllFlags);
+
+		// checking for multiflags 
+		foreach (var i in userEnteredCommand)
+		{
+			if (i.StartsWith("-"))
+			{
+				for (int j = 1;j < i.Length;j++)
+				{
+					if (i[j] == CommandViewIndexFlags[1][1])
+						indexed = true;
+					if (i[j] == CommandViewStatusFlags[1][1])
+						statused = true;
+					if (i[j] == CommandViewUpdateFlags[1][1])
+						update = true;
+					if (i[j] == CommandViewAllFlags[1][1])
+						all = true;
+				}
+			}
+		}
 
 		{ 
 			if (indexed || all)
