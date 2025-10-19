@@ -2,14 +2,6 @@
 
 public class Program 
 {
-    private enum ProgramWorkMode
-    {
-        ProcessingCommands,
-        AddingTask,
-    }
-
-    private static ProgramWorkMode programMode;
-
     struct UserData
     {
         public string firstName, lastName, birthYearString;
@@ -36,14 +28,13 @@ public class Program
     private const string CommandUpdateName = "update";
     private const string CommandReadName = "read";
 
-    private const string CommandEndName = "!end";
+    private const string CommandAddEndMark = "!end";
 
     private static string[] CommandAddMultilineFlags = new string[]
     {
         "--multiline",
         "-m"
     };
-    private static string addingMultilineTask;
 
 	private static string[] CommandViewIndexFlags = new string[]
 	{
@@ -73,47 +64,27 @@ public class Program
         while (isProgramRunning)
         {
             var commandLine = Console.ReadLine();
-
-			switch (programMode)
-            {
-                case ProgramWorkMode.ProcessingCommands:
-                    ProcessCommand(commandLine);
-                    break;
-                case ProgramWorkMode.AddingTask:
-                    AddNewTaskLine(commandLine);
-                    break;
-            }
-
-        }
+			ProcessCommand(commandLine);
+		}
     }
-
-
-    private static void EnterDefaultProgramMode()
-    {
-        programMode = ProgramWorkMode.ProcessingCommands;
-    }
-
 
     private static void ShowHelpInfo()
     {
-        Console.WriteLine("****\tUserInfo Помощник\t****");
+		Console.WriteLine($"""
+			****\tUserInfo Помощник\t****
+			{CommandProfileName} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения>.
+			{CommandAddName} — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {CommandAddMultilineFlags[0]} или {CommandAddMultilineFlags[1]},\n чтобы завершить написание задачи введите {CommandAddEndMark}.
 
-        Console.WriteLine($"{CommandProfileName} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения> .");
+			{CommandViewName} — выводит все задачи из массива (только непустые элементы),
+			{CommandViewIndexFlags[0]} или {CommandViewIndexFlags[1]} чтобы вывести индексы задач,
+			{CommandViewUpdateFlags[0]} или {CommandViewUpdateFlags[1]} чтобы узреть дату внесения последнего изменения,
+			{CommandViewAllFlags[0]} или {CommandViewAllFlags[1]} чтобы показать всю дополнительную информацию.
 
-        Console.WriteLine($"{CommandAddName}" +
-			$" — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {CommandAddMultilineFlags[0]} или " +
-			$"{CommandAddMultilineFlags[1]},\n чтобы завершить написание задачи введите {CommandEndName}.\n");
-
-        Console.WriteLine($"{CommandViewName} — выводит все задачи из массива (только непустые элементы),\n {CommandViewIndexFlags[0]} или {CommandViewIndexFlags[1]} чтобы вывести индексы задач,\n" +
-			$"{CommandViewStatusFlags[0]} или {CommandViewStatusFlags[1]} чтобы отобразть статусы задач,\n" +
-			$"{CommandViewUpdateFlags[0]} или {CommandViewUpdateFlags[1]} чтобы узреть дату внесения последнего изменения\n" +
-			$"{CommandViewAllFlags[0]} или {CommandViewAllFlags[1]} чтобы показать всю дополнительную информацию.\n");
-
-        Console.WriteLine($"{CommandExitName} — завершает цикл и останавливает выполнение программы.");
-        Console.WriteLine($"{CommandDoneName} — отмечает задачу выполненной.");
-        Console.WriteLine($"{CommandDeleteName} — <idx> — удаляет задачу по индексу.");
-        Console.WriteLine($"{CommandUpdateName} — <idx> \"new_text\" — обновляет текст задачи.");
-        Console.WriteLine($"{CommandReadName} — <idx> выводит полный текст задачи, ее статус, и дату последнего изменения.");
+			{CommandExitName} — завершает цикл и останавливает выполнение программы.
+			{CommandDoneName} — <idx> отмечает задачу выполненной.
+			{CommandUpdateName} — <idx> \"new_text\" — обновляет текст задачи.
+			{CommandReadName} — <idx> выводит полный текст задачи, ее статус, и дату последнего изменения.
+			""");
     }
 
     private static void ExitProgram() => isProgramRunning = false;
@@ -159,36 +130,53 @@ public class Program
         todosCount = newTodosCount;
     }
 
-
-    private static void EnterMultilineTaskReadingMode()
-    {
-        programMode = ProgramWorkMode.AddingTask;
-		addingMultilineTask = "";
+	private static bool IsTaskValidToAdd(string task)
+	{
+		return task.Length > 0;
 	}
 
 	private static void AddNewTaskFromCommand(string command)
     {
         string newTask = "";
-        var userEnteredTask = command.Split($"{CommandAddName} ");
+		bool multiline = false;
+        var userEnteredTask = command.Split(' ', 2);
 
         // checking for flags
         foreach (var i in CommandAddMultilineFlags)
         {
             if (userEnteredTask.Contains(i))
             {
-                EnterMultilineTaskReadingMode();
-                return;
+				multiline = true;
             }
         }
 
-        foreach (var item in userEnteredTask)
-        {
-            newTask += item;
-        }
+		if (multiline)
+		{
+			for (var line = Console.ReadLine(); line != CommandAddEndMark; line = Console.ReadLine())
+			{
+				newTask += line + "\n";
+			}
+		}
+		else
+		{
+			if (userEnteredTask.Length < 2)
+			{
+				Console.WriteLine("Нечего добавлять, задачи то нет.");
+				return;
+			}
 
-        InsertNewTask(newTask);
+			if (IsTaskValidToAdd(userEnteredTask[1]))
+				newTask = userEnteredTask[1];
+			else
+			{
+				Console.WriteLine("Нечего добавлять, задачи то нет.");
+				return;
+			}
+		}
 
-        Console.WriteLine($"Добавлена новая задача: \"{newTask}\".");
+		InsertNewTask(newTask);
+
+        Console.WriteLine($"Добавлена новая задача:\n{newTask}");
     }
 
     private static void ShowProfileInfo()
@@ -196,43 +184,62 @@ public class Program
         Console.WriteLine($"Данные пользователя: \"{userData.firstName}\" \"{userData.lastName}\", {userData.birthYear}");
     }
 
-    private static void ViewTasksInfo(string command)
-    {
-		bool indexed = false, statused = false, update = false, all = false;
+	private static bool LineFlagsFounded(string command, string[] flags)
+	{
+		bool flag = false;
 
-        Console.WriteLine("===========================================================");
-        Console.WriteLine("****\tИнформация о задачах\t****");
+		foreach (var i in flags)
+		{ 
+			if (command.Contains(i))
+				flag = true;
+		}
 
-		foreach (var i in CommandViewIndexFlags)
-			indexed = command.Contains(i);
+		return flag;
+	}
 
-		foreach (var i in CommandViewStatusFlags)
-			statused = command.Contains(i);
+	private static void ViewTasksInfo(string command)
+	{
+		string header = "";
 
-		foreach (var i in CommandViewUpdateFlags)
-			update = command.Contains(i);
+		Console.WriteLine("===========================================================");
+		Console.WriteLine("****\tИнформация о задачах\t****");
 
-		foreach (var i in CommandViewAllFlags)
-			all = command.Contains(i);
+		bool indexed = LineFlagsFounded(command, CommandViewIndexFlags);
+		bool statused = LineFlagsFounded(command, CommandViewStatusFlags);
+		bool update = LineFlagsFounded(command, CommandViewUpdateFlags);
+		bool all = LineFlagsFounded(command, CommandViewAllFlags);
+
+		{ 
+			if (indexed || all)
+				header += "Индекс\t";
+			if (statused || all)
+				header += "Статус\t";
+			if (update || all)
+				header += "\tДата обновления\t\t";
+
+			header += "Текст задачи";
+
+			Console.WriteLine(header);
+		}
 
 		for (int i = 0; i < todosCount; i++)
 		{
 			string textOfView = "";
 
 			if (indexed || all)
-				textOfView += $"индекс: \"{i}\"";
+				textOfView += $"{i}\t";
 
 			if (statused || all)
 			{
 				string isDone = statuses[i] ? "сделано" : "не сделано";
-				textOfView += $"\tстатус: \"{isDone}\""; 
+				textOfView += $"{isDone}\t"; 
 			}
 
 			if (update || all)
-				textOfView += $"\tдата обновления: \"{dates[i]}\"";
+				textOfView += $"{dates[i]}\t";
 
 			string taskText = todos[i].Length <= MaxTaskDisplayTextLen ? todos[i] : (todos[i].Substring(0, MaxTaskDisplayTextLen) + "...");
-			textOfView += $"\t задача: \"{taskText}\"";
+			textOfView += $"{taskText}";
 
 			Console.WriteLine(textOfView);
 		}
@@ -337,48 +344,33 @@ public class Program
     {
 		// Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа
 
-		if (command.StartsWith(CommandHelpName))
-		{
-			ShowHelpInfo();
-		}
-		else if (command.StartsWith(CommandExitName))
-		{
-			ExitProgram();
-		}
-		else if (command.StartsWith(CommandAddName))
-		{
-			AddNewTaskFromCommand(command);
-		}
-		else if (command.StartsWith(CommandProfileName))
-		{
-			ShowProfileInfo();
-		}
-		else if (command.StartsWith(CommandViewName))
-		{
-			ViewTasksInfo(command);
-		}
-		else if (command.StartsWith(CommandDoneName))
-		{
-			DoneTask(command);
-		}
-		else if (command.StartsWith(CommandDeleteName))
-		{
-			DeleteTask(command);
-		}
-		else if (command.StartsWith(CommandUpdateName))
-		{
-			UpdateTaskText(command);
-		}
-		else if (command.StartsWith(CommandReadName))
-		{
-			ReadFullTaskText(command);
-		}
+		if (command.StartsWith(CommandHelpName)) ShowHelpInfo();
+		else if (command.StartsWith(CommandExitName)) ExitProgram();
+		else if (command.StartsWith(CommandAddName)) AddNewTaskFromCommand(command);
+		else if (command.StartsWith(CommandProfileName)) ShowProfileInfo();
+		else if (command.StartsWith(CommandViewName)) ViewTasksInfo(command);
+		else if (command.StartsWith(CommandDoneName)) DoneTask(command);
+		else if (command.StartsWith(CommandDeleteName)) DeleteTask(command);
+		else if (command.StartsWith(CommandUpdateName)) UpdateTaskText(command);
+		else if (command.StartsWith(CommandReadName)) ReadFullTaskText(command);
+		else Console.WriteLine("Неизвестная комманда!");
+    }
+
+	private static void GetUserAge()
+	{
+		Console.WriteLine("Введите год рождения:");
+		userData.birthYearString = Console.ReadLine();
+
+		bool isBirthYearValid = int.TryParse(userData.birthYearString, out userData.birthYear);
+
+		if (isBirthYearValid)
+			return;
 		else
 		{
-			// Если ни одна комманда не распознана
-			Console.WriteLine("Неизвестная комманда!");
+			Console.WriteLine("Ошибка: Некорректный год рождения. Пожалуйста, введите целое число.");
+			GetUserAge();
 		}
-    }
+	}
 
     // Получение данных пользователя и их обработка 
     private static void InitializeUserData()
@@ -390,18 +382,10 @@ public class Program
 
         Console.WriteLine("Введите фамилию:");
         userData.lastName = Console.ReadLine();
-        Console.WriteLine("Введите год рождения:");
-        userData.birthYearString = Console.ReadLine();
 
-        bool isBirthYearValid = int.TryParse(userData.birthYearString, out userData.birthYear);
+		GetUserAge();
 
-        if (!isBirthYearValid)
-        {
-            Console.WriteLine("Ошибка: Некорректный год рождения. Пожалуйста, введите целое число.");
-            return;
-        }
-
-        userData.currentYear = DateTime.Now.Year;
+		userData.currentYear = DateTime.Now.Year;
         userData.age = userData.currentYear - userData.birthYear;
 
         Console.WriteLine($"Добавлен пользователь {userData.firstName} {userData.lastName}, возраст - {userData.age}");
@@ -416,19 +400,6 @@ public class Program
         todos = new string[todosStartLen];
         statuses = new bool[todosStartLen];
         dates = new DateTime[todosStartLen];
-
-        EnterDefaultProgramMode();
-    }
-
-    private static void AddNewTaskLine(string commandLine)
-    {
-        if (commandLine.StartsWith(CommandEndName))
-        {
-            AddNewTaskFromCommand(addingMultilineTask);
-            EnterDefaultProgramMode();
-        }
-
-        addingMultilineTask += commandLine + "\n";
     }
 
 }
