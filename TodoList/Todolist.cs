@@ -1,426 +1,79 @@
-﻿using System.Diagnostics;
+﻿
 
-public class Program 
+namespace TodoList;
+internal class TodoList
 {
-    struct UserData
-    {
-        public string firstName, lastName, birthYearString;
-        public int currentYear, age, birthYear;
-    }
+	private Todoitem[] _items = new Todoitem[0];
 
-    private static string[] todos;
-    private static bool[] statuses;
-    private static DateTime[] dates;
-
-    private static int todosCount, todosLen;
-    private static UserData userData = new UserData();
-    private static bool isProgramRunning = true;
-    private static int todosStartLen = 2;
-
-
-    private const string CommandAddName = "add";
-    private const string CommandProfileName = "profile";
-    private const string CommandViewName = "view";
-    private const string CommandExitName = "exit";
-    private const string CommandHelpName = "help";
-    private const string CommandDoneName = "done";
-    private const string CommandDeleteName = "delete";
-    private const string CommandUpdateName = "update";
-    private const string CommandReadName = "read";
-
-    private const string CommandAddEndMark = "!end";
-
-    private static string[] CommandAddMultilineFlags = new string[]
-    {
-        "--multiline",
-        "-m"
-    };
-
-	private static string[] CommandViewIndexFlags = new string[]
+	//добавление задачи
+	public void Add(Todoitem item)
 	{
-		"--index", "-i"
-	};
-	private static string[] CommandViewStatusFlags = new string[]
-	{
-		"--status", "-s"
-	};
-	private static string[] CommandViewUpdateFlags = new string[]
-	{
-		"--update-date", "-d"
-	};
-	private static string[] CommandViewAllFlags = new string[]
-	{
-		"--all", "-a"
-	};
-
-	private const int MaxTaskDisplayTextLen = 30;
-
-
-	public static void Main(string[] args)
-    {
-        InitializeUserData();
-        InitializeTasksData();
-
-        while (isProgramRunning)
-        {
-            var commandLine = Console.ReadLine();
-			ProcessCommand(commandLine);
-		}
-    }
-
-    private static void ShowHelpInfo()
-    {
-		Console.WriteLine($"""
-			****\tUserInfo Помощник\t****
-			{CommandProfileName} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения>.
-			{CommandAddName} — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {CommandAddMultilineFlags[0]} или {CommandAddMultilineFlags[1]},\n чтобы завершить написание задачи введите {CommandAddEndMark}.
-
-			{CommandViewName} — выводит все задачи из массива (только непустые элементы),
-			{CommandViewIndexFlags[0]} или {CommandViewIndexFlags[1]} чтобы вывести индексы задач,
-			{CommandViewUpdateFlags[0]} или {CommandViewUpdateFlags[1]} чтобы узреть дату внесения последнего изменения,
-			{CommandViewAllFlags[0]} или {CommandViewAllFlags[1]} чтобы показать всю дополнительную информацию.
-
-			{CommandExitName} — завершает цикл и останавливает выполнение программы.
-			{CommandDoneName} — <idx> отмечает задачу выполненной.
-			{CommandUpdateName} — <idx> \"new_text\" — обновляет текст задачи.
-			{CommandReadName} — <idx> выводит полный текст задачи, ее статус, и дату последнего изменения.
-			""");
-    }
-
-    private static void ExitProgram() => isProgramRunning = false;
-
-
-    private static void InsertNewTask(string task)
-    {
-        int newTodosCount = todosCount + 1;
-
-        // Расширение массива 'todos'
-        if (newTodosCount > todosLen)
-        {
-            int newTodosLen = todosLen * 2;
-
-            string[] newTodos = new string[newTodosLen];
-            bool[] newStatuses = new bool[newTodosLen];
-            DateTime[] newDates = new DateTime[newTodosLen];
-
-            for (int i = 0; i < todosCount; i++)
-            {
-                newTodos[i] = todos[i];
-                newStatuses[i] = statuses[i];
-                newDates[i] = dates[i];
-            }
-
-            newTodos[todosCount] = task;
-            newDates[todosCount] = DateTime.Now;
-            newStatuses[todosCount] = false;
-
-            todos = newTodos;
-            statuses = newStatuses;
-            dates = newDates;
-
-            todosLen = newTodosLen;
-        }
-        else
-        {
-            todos[todosCount] = task;
-            dates[todosCount] = DateTime.Now;
-            statuses[todosCount] = false;
-        }
-
-        todosCount = newTodosCount;
-    }
-
-	private static bool IsTaskValidToAdd(string task)
-	{
-		return task.Length > 0;
+		_items = IncreaseArray(_items, item);
 	}
 
-	private static void AddNewTaskFromCommand(string command)
-    {
-        string newTask = "";
-		bool multiline = false;
-        var userEnteredTask = command.Split(' ', 2);
-
-        // checking for flags
-        foreach (var i in CommandAddMultilineFlags)
-        {
-            if (userEnteredTask.Contains(i))
-            {
-				multiline = true;
-            }
-        }
-
-		if (multiline)
+	//удаление
+	public void Delete(int index)
+	{
+		if (index >= 0 && index < _items.Length)
 		{
-			for (var line = Console.ReadLine(); line != CommandAddEndMark; line = Console.ReadLine())
-			{
-				newTask += line + "\n";
-			}
+			Todoitem[] newArray = new Todoitem[_items.Length - 1];
+			Array.Copy(_items, 0, newArray, 0, index);
+			Array.Copy(_items, index + 1, newArray, index, _items.Length - index - 1);
+			_items = newArray;
 		}
 		else
 		{
-			if (userEnteredTask.Length < 2)
-			{
-				Console.WriteLine("Нечего добавлять, задачи то нет.");
-				return;
-			}
-
-			if (IsTaskValidToAdd(userEnteredTask[1]))
-				newTask = userEnteredTask[1];
-			else
-			{
-				Console.WriteLine("Нечего добавлять, задачи то нет.");
-				return;
-			}
+			Console.WriteLine("Неверный индекс");
 		}
-
-		InsertNewTask(newTask);
-
-        Console.WriteLine($"Добавлена новая задача:\n{newTask}");
-    }
-
-    private static void ShowProfileInfo()
-    {
-        Console.WriteLine($"Данные пользователя: \"{userData.firstName}\" \"{userData.lastName}\", {userData.birthYear}");
-    }
-
-	private static bool LineFlagsFounded(string command, string[] flags)
-	{
-		bool flag = false;
-
-		foreach (var i in flags)
-		{ 
-			if (command.Contains(i))
-				flag = true;
-		}
-
-		return flag;
 	}
 
-	private static void ViewTasksInfo(string command)
+	public void View(bool showIndex, bool showDone, bool showDate)
+	{
+		Console.WriteLine(GenerateTableHeader(showIndex, showDone, showDate));
+		for (int i = 0; i < _items.Length; i++)
+		{
+			Console.WriteLine(GenerateTableRow(_items[i], i, showIndex, showDone, showDate));
+		}
+	}
+
+	public Todoitem GetItem(int index)
+	{
+		if (index >= 0 && index < _items.Length)
+		{
+			return _items[index];
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	// увеличение размера массива при переполнении
+	private Todoitem[] IncreaseArray(Todoitem[] items, Todoitem item)
+	{
+		Todoitem[] newArray = new Todoitem[items.Length + 1];
+		Array.Copy(items, newArray, items.Length);
+		newArray[items.Length] = item;
+		return newArray;
+	}
+
+	private string GenerateTableHeader(bool showIndex, bool showDone, bool showDate)
 	{
 		string header = "";
-		string[] userEnteredCommand = command.Split(' ');
-
-		Console.WriteLine("===========================================================");
-		Console.WriteLine("****\tИнформация о задачах\t****");
-
-		// checking for flags
-		bool indexed = LineFlagsFounded(command, CommandViewIndexFlags);
-		bool statused = LineFlagsFounded(command, CommandViewStatusFlags);
-		bool update = LineFlagsFounded(command, CommandViewUpdateFlags);
-		bool all = LineFlagsFounded(command, CommandViewAllFlags);
-
-		// checking for multiflags 
-		foreach (var i in userEnteredCommand)
-		{
-			if (i.StartsWith("-"))
-			{
-				for (int j = 1;j < i.Length;j++)
-				{
-					if (i[j] == CommandViewIndexFlags[1][1])
-						indexed = true;
-					if (i[j] == CommandViewStatusFlags[1][1])
-						statused = true;
-					if (i[j] == CommandViewUpdateFlags[1][1])
-						update = true;
-					if (i[j] == CommandViewAllFlags[1][1])
-						all = true;
-				}
-			}
-		}
-
-		{ 
-			if (indexed || all)
-				header += "Индекс\t";
-			if (statused || all)
-				header += "Статус\t";
-			if (update || all)
-				header += "\tДата обновления\t\t";
-
-			header += "Текст задачи";
-
-			Console.WriteLine(header);
-		}
-
-		for (int i = 0; i < todosCount; i++)
-		{
-			string textOfView = "";
-
-			if (indexed || all)
-				textOfView += $"{i}\t";
-
-			if (statused || all)
-			{
-				string isDone = statuses[i] ? "сделано" : "не сделано";
-				textOfView += $"{isDone}\t"; 
-			}
-
-			if (update || all)
-				textOfView += $"{dates[i]}\t";
-
-			string taskText = todos[i].Length <= MaxTaskDisplayTextLen ? todos[i] : (todos[i].Substring(0, MaxTaskDisplayTextLen) + "...");
-			textOfView += $"{taskText}";
-
-			Console.WriteLine(textOfView);
-		}
-
-		Console.WriteLine("===========================================================");
-    }
-
-
-    private static int ReadIndexFromCommand(string commandName, string command, bool checkForNumOfTasks = true)
-    {
-        var items = command.Split(commandName);
-        Debug.Assert(items.Length >= 2);
-
-        bool indexValid = int.TryParse(items[1], out int index);
-        Debug.Assert(indexValid);
-
-		if (checkForNumOfTasks && (index < 0 || index >= todosCount))
-		{
-			throw new Exception($"ReadIndexFromCommand: Uncorrected index {index}!");
-		}
-
-        return index;
-    }
-
-    private static void DoneTask(string command)
-    {
-        int index = ReadIndexFromCommand(CommandDoneName, command);
-        statuses[index] = true;
-		dates[index] = DateTime.Now;
-        Console.WriteLine($"Задача под номером {index} завершена.");
-    }
-
-    private static void DeleteTask(string command)
-    {
-        if (todosCount == 0)
-        {
-            Console.WriteLine("Тут нечего удалять.");
-            return;
-        }
-
-        int index = ReadIndexFromCommand(CommandDeleteName, command);
-
-        var newTodos = todos;
-        var newStatuses = statuses;
-        var newDates = dates;
-
-        for (int i = index;i< todosCount; i++)
-        {
-            newTodos[i - 1] = todos[i];
-            newStatuses[i - 1] = statuses[i];
-            newDates[i - 1] = dates[i];
-        }
-
-        newTodos[todosCount - 1] = null;
-        newStatuses[todosCount - 1] = false;
-        newDates[todosCount - 1] = new DateTime();
-
-        todos = newTodos;
-        statuses = newStatuses;
-        dates = newDates;
-        todosCount--;
-    }
-
-    private static void UpdateTaskText(string command)
-    {
-        var args = command.Split(' ', 3);
-
-        bool indexValid = int.TryParse(args[1], out int index);
-        if (!indexValid)
-        {
-            Console.WriteLine($"{CommandUpdateName}: не верный индекс задачи.");
-            return;
-        }
-        
-        if (index < 0 && index > todosCount)
-        { 
-            Console.WriteLine($"{CommandUpdateName}: задачи под номером {index} не существует.");
-            return;
-        }
-
-        todos[index] = args[2];
-		dates[index] = DateTime.Now;
-
-        Console.WriteLine($"Задача под номером {index} изменена на \"{todos[index]}\".");
-    }
-
-	private static void ReadFullTaskText(string command)
-	{
-		int index = ReadIndexFromCommand(CommandReadName, command);
-
-		Console.WriteLine(todos[index]);
-
-		string statusText = statuses[index] ? "выполнена" : "не выполнена";
-		Console.WriteLine($"( {statusText} )");
-
-		Console.WriteLine($"Дата последнего изменения: {dates[index]}");
+		if (showIndex) header += "Indext";
+		header += "Textt";
+		if (showDone) header += "Donet";
+		if (showDate) header += "Datet";
+		return header;
 	}
 
-
-    // Эта байда обрабатывает комманду введенную юзером
-    private static void ProcessCommand(string command)
-    {
-		// Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа
-
-		if (command.StartsWith(CommandHelpName)) ShowHelpInfo();
-		else if (command.StartsWith(CommandExitName)) ExitProgram();
-		else if (command.StartsWith(CommandAddName)) AddNewTaskFromCommand(command);
-		else if (command.StartsWith(CommandProfileName)) ShowProfileInfo();
-		else if (command.StartsWith(CommandViewName)) ViewTasksInfo(command);
-		else if (command.StartsWith(CommandDoneName)) DoneTask(command);
-		else if (command.StartsWith(CommandDeleteName)) DeleteTask(command);
-		else if (command.StartsWith(CommandUpdateName)) UpdateTaskText(command);
-		else if (command.StartsWith(CommandReadName)) ReadFullTaskText(command);
-		else Console.WriteLine("Неизвестная комманда!");
-    }
-
-	private static void GetUserAge()
+	private string GenerateTableRow(Todoitem item, int index, bool showIndex, bool showDone, bool showDate)
 	{
-		Console.WriteLine("Введите год рождения:");
-		userData.birthYearString = Console.ReadLine();
-
-		bool isBirthYearValid = int.TryParse(userData.birthYearString, out userData.birthYear);
-
-		if (isBirthYearValid)
-			return;
-		else
-		{
-			Console.WriteLine("Ошибка: Некорректный год рождения. Пожалуйста, введите целое число.");
-			GetUserAge();
-		}
+		string row = "";
+		if (showIndex) row += $"{index}t";
+		row += $"{item.Text}t";
+		if (showDone) row += $"{item.IsDone}t";
+		if (showDate) row += $"{item.LastUpdate.ToShortDateString()}t";
+		return row;
 	}
-
-    // Получение данных пользователя и их обработка 
-    private static void InitializeUserData()
-    {
-        Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
-
-        Console.WriteLine("Введите имя:");
-        userData.firstName = Console.ReadLine();
-
-        Console.WriteLine("Введите фамилию:");
-        userData.lastName = Console.ReadLine();
-
-		GetUserAge();
-
-		userData.currentYear = DateTime.Now.Year;
-        userData.age = userData.currentYear - userData.birthYear;
-
-        Console.WriteLine($"Добавлен пользователь {userData.firstName} {userData.lastName}, возраст - {userData.age}");
-    }
-
-
-    private static void InitializeTasksData()
-    {
-        todosCount = 0;
-        todosLen = todosStartLen;
-
-        todos = new string[todosStartLen];
-        statuses = new bool[todosStartLen];
-        dates = new DateTime[todosStartLen];
-    }
-
 }
