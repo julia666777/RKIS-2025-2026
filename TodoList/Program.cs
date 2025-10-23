@@ -1,23 +1,12 @@
 ﻿using System.Diagnostics;
-using TodoList;
 
+namespace TodoList;
 public class Program 
 {
-	//struct UserData
-	//{
-	//    public string firstName, lastName, birthYearString;
-	//    public int currentYear, age, birthYear;
-	//}
+
 	private static Profile profile = new Profile();
-
-    private static string[] todos;
-    private static bool[] statuses;
-    private static DateTime[] dates;
-
-    private static int todosCount, todosLen;
-    //private static UserData userData = new UserData();
+	private static TodoList todoList = new TodoList();
     private static bool isProgramRunning = true;
-    private static int todosStartLen = 2;
 
 
     private const string CommandAddName = "add";
@@ -63,7 +52,6 @@ public class Program
 		Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
 
 		InitializeUserData();
-        InitializeTasksData();
 
         while (isProgramRunning)
         {
@@ -96,42 +84,7 @@ public class Program
 
     private static void InsertNewTask(string task)
     {
-        int newTodosCount = todosCount + 1;
-
-        // Расширение массива 'todos'
-        if (newTodosCount > todosLen)
-        {
-            int newTodosLen = todosLen * 2;
-
-            string[] newTodos = new string[newTodosLen];
-            bool[] newStatuses = new bool[newTodosLen];
-            DateTime[] newDates = new DateTime[newTodosLen];
-
-            for (int i = 0; i < todosCount; i++)
-            {
-                newTodos[i] = todos[i];
-                newStatuses[i] = statuses[i];
-                newDates[i] = dates[i];
-            }
-
-            newTodos[todosCount] = task;
-            newDates[todosCount] = DateTime.Now;
-            newStatuses[todosCount] = false;
-
-            todos = newTodos;
-            statuses = newStatuses;
-            dates = newDates;
-
-            todosLen = newTodosLen;
-        }
-        else
-        {
-            todos[todosCount] = task;
-            dates[todosCount] = DateTime.Now;
-            statuses[todosCount] = false;
-        }
-
-        todosCount = newTodosCount;
+		todoList.Add(new Todoitem(task));
     }
 
 	private static bool IsTaskValidToAdd(string task)
@@ -203,7 +156,6 @@ public class Program
 
 	private static void ViewTasksInfo(string command)
 	{
-		string header = "";
 		string[] userEnteredCommand = command.Split(' ');
 
 		Console.WriteLine("===========================================================");
@@ -234,40 +186,8 @@ public class Program
 			}
 		}
 
-		{ 
-			if (indexed || all)
-				header += "Индекс\t";
-			if (statused || all)
-				header += "Статус\t";
-			if (update || all)
-				header += "\tДата обновления\t\t";
-
-			header += "Текст задачи";
-
-			Console.WriteLine(header);
-		}
-
-		for (int i = 0; i < todosCount; i++)
-		{
-			string textOfView = "";
-
-			if (indexed || all)
-				textOfView += $"{i}\t";
-
-			if (statused || all)
-			{
-				string isDone = statuses[i] ? "сделано" : "не сделано";
-				textOfView += $"{isDone}\t"; 
-			}
-
-			if (update || all)
-				textOfView += $"{dates[i]}\t";
-
-			string taskText = todos[i].Length <= MaxTaskDisplayTextLen ? todos[i] : (todos[i].Substring(0, MaxTaskDisplayTextLen) + "...");
-			textOfView += $"{taskText}";
-
-			Console.WriteLine(textOfView);
-		}
+		// complete tasks info showing
+		todoList.View(indexed, statused, update);
 
 		Console.WriteLine("===========================================================");
     }
@@ -281,7 +201,7 @@ public class Program
         bool indexValid = int.TryParse(items[1], out int index);
         Debug.Assert(indexValid);
 
-		if (checkForNumOfTasks && (index < 0 || index >= todosCount))
+		if (checkForNumOfTasks && (index < 0 || index >= todoList.Lenght))
 		{
 			throw new Exception($"ReadIndexFromCommand: Uncorrected index {index}!");
 		}
@@ -292,80 +212,85 @@ public class Program
     private static void DoneTask(string command)
     {
         int index = ReadIndexFromCommand(CommandDoneName, command);
-        statuses[index] = true;
-		dates[index] = DateTime.Now;
+        todoList.GetItem(index).MarkDone();
         Console.WriteLine($"Задача под номером {index} завершена.");
     }
 
     private static void DeleteTask(string command)
     {
-        if (todosCount == 0)
-        {
-            Console.WriteLine("Тут нечего удалять.");
-            return;
-        }
+		// TODO: implement todoList object methods
 
-        int index = ReadIndexFromCommand(CommandDeleteName, command);
+        //if (todosCount == 0)
+        //{
+        //    Console.WriteLine("Тут нечего удалять.");
+        //    return;
+        //}
 
-        var newTodos = todos;
-        var newStatuses = statuses;
-        var newDates = dates;
+        //int index = ReadIndexFromCommand(CommandDeleteName, command);
 
-        for (int i = index;i< todosCount; i++)
-        {
-            newTodos[i - 1] = todos[i];
-            newStatuses[i - 1] = statuses[i];
-            newDates[i - 1] = dates[i];
-        }
+        //var newTodos = todos;
+        //var newStatuses = statuses;
+        //var newDates = dates;
 
-        newTodos[todosCount - 1] = null;
-        newStatuses[todosCount - 1] = false;
-        newDates[todosCount - 1] = new DateTime();
+        //for (int i = index;i< todosCount; i++)
+        //{
+        //    newTodos[i - 1] = todos[i];
+        //    newStatuses[i - 1] = statuses[i];
+        //    newDates[i - 1] = dates[i];
+        //}
 
-        todos = newTodos;
-        statuses = newStatuses;
-        dates = newDates;
-        todosCount--;
+        //newTodos[todosCount - 1] = null;
+        //newStatuses[todosCount - 1] = false;
+        //newDates[todosCount - 1] = new DateTime();
+
+        //todos = newTodos;
+        //statuses = newStatuses;
+        //dates = newDates;
+        //todosCount--;
     }
 
     private static void UpdateTaskText(string command)
     {
-        var args = command.Split(' ', 3);
+		// TODO: implement todoList object methods
 
-        bool indexValid = int.TryParse(args[1], out int index);
-        if (!indexValid)
-        {
-            Console.WriteLine($"{CommandUpdateName}: не верный индекс задачи.");
-            return;
-        }
+  //      var args = command.Split(' ', 3);
+
+  //      bool indexValid = int.TryParse(args[1], out int index);
+  //      if (!indexValid)
+  //      {
+  //          Console.WriteLine($"{CommandUpdateName}: не верный индекс задачи.");
+  //          return;
+  //      }
         
-        if (index < 0 && index > todosCount)
-        { 
-            Console.WriteLine($"{CommandUpdateName}: задачи под номером {index} не существует.");
-            return;
-        }
+  //      if (index < 0 && index > todosCount)
+  //      { 
+  //          Console.WriteLine($"{CommandUpdateName}: задачи под номером {index} не существует.");
+  //          return;
+  //      }
 
-        todos[index] = args[2];
-		dates[index] = DateTime.Now;
+  //      todos[index] = args[2];
+		//dates[index] = DateTime.Now;
 
-        Console.WriteLine($"Задача под номером {index} изменена на \"{todos[index]}\".");
+  //      Console.WriteLine($"Задача под номером {index} изменена на \"{todos[index]}\".");
     }
 
 	private static void ReadFullTaskText(string command)
 	{
-		int index = ReadIndexFromCommand(CommandReadName, command);
+		// TODO: implement todoList object methods
 
-		Console.WriteLine(todos[index]);
+		//int index = ReadIndexFromCommand(CommandReadName, command);
 
-		string statusText = statuses[index] ? "выполнена" : "не выполнена";
-		Console.WriteLine($"( {statusText} )");
+		//Console.WriteLine(todos[index]);
 
-		Console.WriteLine($"Дата последнего изменения: {dates[index]}");
+		//string statusText = statuses[index] ? "выполнена" : "не выполнена";
+		//Console.WriteLine($"( {statusText} )");
+
+		//Console.WriteLine($"Дата последнего изменения: {dates[index]}");
 	}
 
 
-    // Эта байда обрабатывает комманду введенную юзером
-    private static void ProcessCommand(string command)
+	// Эта байда обрабатывает комманду введенную юзером
+	private static void ProcessCommand(string command)
     {
 		// Проверка комманд, если комманда опознана, то выполняется соответствующая процедупа
 
@@ -415,17 +340,6 @@ public class Program
 		int age = currentYear - profile.BirthYear;
 
         Console.WriteLine($"Добавлен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
-    }
-
-
-    private static void InitializeTasksData()
-    {
-        todosCount = 0;
-        todosLen = todosStartLen;
-
-        todos = new string[todosStartLen];
-        statuses = new bool[todosStartLen];
-        dates = new DateTime[todosStartLen];
     }
 
 }

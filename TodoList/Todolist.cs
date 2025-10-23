@@ -5,6 +5,9 @@ internal class TodoList
 {
 	private Todoitem[] _items = new Todoitem[0];
 
+	// Количество задач в списке
+	public int Lenght { get => _items.Length; }
+
 	//добавление задачи
 	public void Add(Todoitem item)
 	{
