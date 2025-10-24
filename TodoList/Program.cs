@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace TodoList;
 public class Program 
@@ -218,64 +220,72 @@ public class Program
 
     private static void DeleteTask(string command)
     {
+		int index = ReadIndexFromCommand(CommandDeleteName, command);
+		todoList.Delete(index);
+		Console.WriteLine($"Задача под номером {index} удалена.");
+
 		// TODO: implement todoList object methods
 
-        //if (todosCount == 0)
-        //{
-        //    Console.WriteLine("Тут нечего удалять.");
-        //    return;
-        //}
+		//if (todosCount == 0)
+		//{
+		//    Console.WriteLine("Тут нечего удалять.");
+		//    return;
+		//}
 
-        //int index = ReadIndexFromCommand(CommandDeleteName, command);
+		//int index = ReadIndexFromCommand(CommandDeleteName, command);
 
-        //var newTodos = todos;
-        //var newStatuses = statuses;
-        //var newDates = dates;
+		//var newTodos = todos;
+		//var newStatuses = statuses;
+		//var newDates = dates;
 
-        //for (int i = index;i< todosCount; i++)
-        //{
-        //    newTodos[i - 1] = todos[i];
-        //    newStatuses[i - 1] = statuses[i];
-        //    newDates[i - 1] = dates[i];
-        //}
+		//for (int i = index;i< todosCount; i++)
+		//{
+		//    newTodos[i - 1] = todos[i];
+		//    newStatuses[i - 1] = statuses[i];
+		//    newDates[i - 1] = dates[i];
+		//}
 
-        //newTodos[todosCount - 1] = null;
-        //newStatuses[todosCount - 1] = false;
-        //newDates[todosCount - 1] = new DateTime();
+		//newTodos[todosCount - 1] = null;
+		//newStatuses[todosCount - 1] = false;
+		//newDates[todosCount - 1] = new DateTime();
 
-        //todos = newTodos;
-        //statuses = newStatuses;
-        //dates = newDates;
-        //todosCount--;
-    }
+		//todos = newTodos;
+		//statuses = newStatuses;
+		//dates = newDates;
+		//todosCount--;
+	}
 
     private static void UpdateTaskText(string command)
     {
+		int index = ReadIndexFromCommand(CommandUpdateName, command);
+		string newText = Console.ReadLine();
+		todoList.GetItem(index).UpdateText(newText);
+
 		// TODO: implement todoList object methods
 
-  //      var args = command.Split(' ', 3);
+		//      var args = command.Split(' ', 3);
 
-  //      bool indexValid = int.TryParse(args[1], out int index);
-  //      if (!indexValid)
-  //      {
-  //          Console.WriteLine($"{CommandUpdateName}: не верный индекс задачи.");
-  //          return;
-  //      }
-        
-  //      if (index < 0 && index > todosCount)
-  //      { 
-  //          Console.WriteLine($"{CommandUpdateName}: задачи под номером {index} не существует.");
-  //          return;
-  //      }
+		//      bool indexValid = int.TryParse(args[1], out int index);
+		//      if (!indexValid)
+		//      {
+		//          Console.WriteLine($"{CommandUpdateName}: не верный индекс задачи.");
+		//          return;
+		//      }
 
-  //      todos[index] = args[2];
-		//dates[index] = DateTime.Now;
-
-  //      Console.WriteLine($"Задача под номером {index} изменена на \"{todos[index]}\".");
-    }
+		//      if (index < 0 && index > todosCount)
+		//      { 
+		//          Console.WriteLine($"{CommandUpdateName}: задачи под номером {index} не существует.");
+		//          return;
+		//      }
+		//      todos[index] = args[2];
+		//dates[index] = DateTime.Now;		
+		//      Console.WriteLine($"Задача под номером {index} изменена на \"{todos[index]}\".");
+	}
 
 	private static void ReadFullTaskText(string command)
 	{
+		int index = ReadIndexFromCommand(CommandReadName, command);
+		todoList.GetItem(index).GetFullInfo();
 		// TODO: implement todoList object methods
 
 		//int index = ReadIndexFromCommand(CommandReadName, command);
