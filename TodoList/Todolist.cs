@@ -3,10 +3,13 @@
 namespace TodoList;
 internal class TodoList
 {
-	private Todoitem[] _items = new Todoitem[0];
+	private const int ItemsStartLen = 2;
+	private Todoitem[] _items = new Todoitem[ItemsStartLen];
 
 	// Количество задач в списке
-	public int Lenght { get => _items.Length; }
+	private int _realLenght = 0;
+	public int Length { get => _realLenght; }
+	public int LenghtAllocated { get => _items.Length; }
 
 	//добавление задачи
 	public void Add(Todoitem item)
@@ -33,7 +36,7 @@ internal class TodoList
 	public void View(bool showIndex, bool showDone, bool showDate)
 	{
 		Console.WriteLine(GenerateTableHeader(showIndex, showDone, showDate));
-		for (int i = 0; i < _items.Length; i++)
+		for (int i = 0; i < Length; i++)
 		{
 			Console.WriteLine(GenerateTableRow(_items[i], i, showIndex, showDone, showDate));
 		}
@@ -54,29 +57,41 @@ internal class TodoList
 	// увеличение размера массива при переполнении
 	private Todoitem[] IncreaseArray(Todoitem[] items, Todoitem item)
 	{
-		Todoitem[] newArray = new Todoitem[items.Length + 1];
-		Array.Copy(items, newArray, items.Length);
-		newArray[items.Length] = item;
-		return newArray;
+		int newLen = Length + 1;
+		
+		if (newLen >= LenghtAllocated)
+		{
+			Todoitem[] newArray = new Todoitem[LenghtAllocated * 2];
+			Array.Copy(items, newArray, items.Length);
+			newArray[Length] = item;
+			_realLenght++;
+			return newArray;
+		}
+		else
+		{
+			_items[Length] = item;
+			_realLenght++;
+			return _items;
+		}
 	}
 
 	private string GenerateTableHeader(bool showIndex, bool showDone, bool showDate)
 	{
 		string header = "";
-		if (showIndex) header += "Indext";
-		header += "Textt";
-		if (showDone) header += "Donet";
-		if (showDate) header += "Datet";
+		if (showIndex) header += "Index ";
+		header += "Text ";
+		if (showDone) header += "Done ";
+		if (showDate) header += "Date ";
 		return header;
 	}
 
 	private string GenerateTableRow(Todoitem item, int index, bool showIndex, bool showDone, bool showDate)
 	{
 		string row = "";
-		if (showIndex) row += $"{index}t";
-		row += $"{item.Text}t";
-		if (showDone) row += $"{item.IsDone}t";
-		if (showDate) row += $"{item.LastUpdate.ToShortDateString()}t";
+		if (showIndex) row += $"{index} ";
+		row += $"\"{item.Text}\" ";
+		if (showDone) row += $"{item.IsDone} ";
+		if (showDate) row += $"{item.LastUpdate.ToShortDateString()} ";
 		return row;
 	}
 }
