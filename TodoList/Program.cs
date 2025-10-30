@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace TodoList;
 public class Program 
@@ -18,8 +19,6 @@ public class Program
     private const string CommandDeleteName = "delete";
     private const string CommandUpdateName = "update";
     private const string CommandReadName = "read";
-
-    private const string CommandAddEndMark = "!end";
 
     private static string[] CommandAddMultilineFlags = new string[]
     {
@@ -65,7 +64,7 @@ public class Program
 		Console.WriteLine($"""
 			****\tUserInfo Помощник\t****
 			{CommandProfileName} — выводит данные пользователя в формате: <Имя> <Фамилия>, <Год рождения>.
-			{CommandAddName} — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {CommandAddMultilineFlags[0]} или {CommandAddMultilineFlags[1]},\n чтобы завершить написание задачи введите {CommandAddEndMark}.
+			{CommandAddName} — добавляет новую задачу. Формат ввода: add \"текст задачи\",\n или мультистрочно при наличии флагов {CommandAddMultilineFlags[0]} или {CommandAddMultilineFlags[1]},\n чтобы завершить написание задачи введите {AddCommand.CommandAddEndMark}.
 
 			{CommandViewName} — выводит все задачи из массива (только непустые элементы),
 			{CommandViewIndexFlags[0]} или {CommandViewIndexFlags[1]} чтобы вывести индексы задач,
@@ -81,12 +80,6 @@ public class Program
 
     private static void ExitProgram() => isProgramRunning = false;
 
-
-    private static void InsertNewTask(string task)
-    {
-		todoList.Add(new Todoitem(task));
-    }
-
 	private static bool IsTaskValidToAdd(string task)
 	{
 		return task.Length > 0;
@@ -94,12 +87,11 @@ public class Program
 
 	private static void AddNewTaskFromCommand(string command)
     {
-        string newTask = "";
 		bool multiline = false;
         var userEnteredTask = command.Split(' ', 2);
 
-        // checking for flags
-        foreach (var i in CommandAddMultilineFlags)
+		// checking for flags
+		foreach (var i in CommandAddMultilineFlags)
         {
             if (userEnteredTask.Contains(i))
             {
@@ -107,33 +99,22 @@ public class Program
             }
         }
 
-		if (multiline)
+		// execution
+		// FIXME
+		if (!multiline)
 		{
-			for (var line = Console.ReadLine(); line != CommandAddEndMark; line = Console.ReadLine())
+			if (IsTaskValidToAdd(userEnteredTask[1]))
 			{
-				newTask += line + "\n";
+				AddCommand addCommand = new AddCommand(todoList, multiline, userEnteredTask[1]);
+				addCommand.Execute();
+				Console.WriteLine($"Добавлена новая задача:\n{addCommand.Task}");
 			}
 		}
 		else
 		{
-			if (userEnteredTask.Length < 2)
-			{
-				Console.WriteLine("Нечего добавлять, задачи то нет.");
-				return;
-			}
-
-			if (IsTaskValidToAdd(userEnteredTask[1]))
-				newTask = userEnteredTask[1];
-			else
-			{
-				Console.WriteLine("Нечего добавлять, задачи то нет.");
-				return;
-			}
+			AddCommand addCommand = new AddCommand(todoList, multiline, "");
+			addCommand.Execute();
 		}
-
-		InsertNewTask(newTask);
-
-        Console.WriteLine($"Добавлена новая задача:\n{newTask}");
     }
 
     private static void ShowProfileInfo()
