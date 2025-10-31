@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace TodoList;
 public class Program 
@@ -171,7 +170,8 @@ public class Program
 			indexed = statused = update = true;
 
 		// complete tasks info showing
-		todoList.View(indexed, statused, update);
+		ICommand viewCommand = new ViewCommand(todoList, indexed || all, update || all, statused || all);
+		viewCommand.Execute();
 
 		Console.WriteLine("===========================================================");
     }
