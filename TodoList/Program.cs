@@ -169,7 +169,7 @@ public class Program
 		if (all)
 			indexed = statused = update = true;
 
-		// complete tasks info showing
+		// FIXME
 		ICommand viewCommand = new ViewCommand(todoList, indexed || all, update || all, statused || all);
 		viewCommand.Execute();
 
@@ -195,9 +195,9 @@ public class Program
 
     private static void DoneTask(string command)
     {
-        int index = ReadIndexFromCommand(CommandDoneName, command);
-        todoList.GetItem(index).MarkDone();
-        Console.WriteLine($"Задача под номером {index} завершена.");
+        int index = ReadIndexFromCommand(CommandDoneName, command, false);
+		ICommand doneCommand = new DoneCommand(todoList, index);
+		doneCommand.Execute();
     }
 
     private static void DeleteTask(string command)
@@ -224,15 +224,20 @@ public class Program
 			return;
 		}
 
-		todoList.GetItem(index).UpdateText(args[2]);
-
-		Console.WriteLine($"Задача под номером {index} изменена на \"{todoList.GetItem(index).Text}\".");
+		if (args.Length > 2 && todoList.IsValidIndex(index))
+		{
+			ICommand updateCommand = new UpdateCommand(todoList, index, args[2]);
+			updateCommand.Execute();
+		}
+		else
+			Console.WriteLine("Не правильно введена комманда.");
 	}
 
 	private static void ReadFullTaskText(string command)
 	{
-		int index = ReadIndexFromCommand(CommandReadName, command);
-		todoList.GetItem(index).GetFullInfo();
+		int index = ReadIndexFromCommand(CommandReadName, command, false);
+		ICommand readCommand = new ReadCommand(todoList, index);
+		readCommand.Execute();
 	}
 
 

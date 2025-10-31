@@ -44,14 +44,7 @@ internal class TodoList
 
 	public Todoitem GetItem(int index)
 	{
-		if (index >= 0 && index < _items.Length)
-		{
-			return _items[index];
-		}
-		else
-		{
-			return null;
-		}
+		return IsValidIndex(index) ? _items[index] : null;
 	}
 
 	// увеличение размера массива при переполнении
@@ -94,4 +87,6 @@ internal class TodoList
 		if (showDate) row += $"{item.LastUpdate.ToShortDateString()} ";
 		return row;
 	}
+
+	public bool IsValidIndex(int index) => index >= 0 && index < Length;
 }
