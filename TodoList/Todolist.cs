@@ -12,9 +12,11 @@ internal class TodoList
 	public int LenghtAllocated { get => _items.Length; }
 
 	//добавление задачи
-	public void Add(Todoitem item)
+	public void Add(Todoitem item, bool printMessage = true)
 	{
 		_items = IncreaseArray(_items, item);
+		if (printMessage)
+			Console.WriteLine($"Добавлена новая задача {item.Text}.");
 	}
 
 	//удаление
@@ -26,6 +28,7 @@ internal class TodoList
 			Array.Copy(_items, 0, newArray, 0, index);
 			Array.Copy(_items, index + 1, newArray, index, _items.Length - index - 1);
 			_items = newArray;
+			_realLenght--;
 		}
 		else
 		{

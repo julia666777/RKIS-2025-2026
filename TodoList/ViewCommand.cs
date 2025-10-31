@@ -17,6 +17,11 @@ internal class ViewCommand : ICommand
 
 	public void Execute()
 	{
+		Console.WriteLine("===========================================================");
+		Console.WriteLine("****\tИнформация о задачах\t****");
+
 		_todoList.View(_showIndexes, _showDates, _showStatuses);
+
+		Console.WriteLine("===========================================================");
 	}
 }

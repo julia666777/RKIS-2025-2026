@@ -23,7 +23,7 @@ internal class AddCommand : ICommand
 
 			for (var line = Console.ReadLine(); line != CommandAddEndMark; line = Console.ReadLine())
 			{
-				Task += line + "\n";
+				Task += line + " ";
 			}
 
 			_todoList.Add(new Todoitem(Task));
