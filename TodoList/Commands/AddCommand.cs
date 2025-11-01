@@ -26,11 +26,11 @@ internal class AddCommand : ICommand
 				Task += line + " ";
 			}
 
-			_todoList.Add(new Todoitem(Task));
+			_todoList.Add(new TodoItem(Task));
 		}
 		else
 		{
-			_todoList.Add(new Todoitem(Task));
+			_todoList.Add(new TodoItem(Task));
 		}
 	}
 }

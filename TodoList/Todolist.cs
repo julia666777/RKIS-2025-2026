@@ -4,7 +4,7 @@ namespace TodoList;
 internal class TodoList
 {
 	private const int ItemsStartLen = 2;
-	private Todoitem[] _items = new Todoitem[ItemsStartLen];
+	private TodoItem[] _items = new TodoItem[ItemsStartLen];
 
 	// Количество задач в списке
 	private int _realLenght = 0;
@@ -12,7 +12,7 @@ internal class TodoList
 	public int LenghtAllocated { get => _items.Length; }
 
 	//добавление задачи
-	public void Add(Todoitem item, bool printMessage = true)
+	public void Add(TodoItem item, bool printMessage = true)
 	{
 		_items = IncreaseArray(_items, item);
 		if (printMessage)
@@ -24,7 +24,7 @@ internal class TodoList
 	{
 		if (index >= 0 && index < _items.Length)
 		{
-			Todoitem[] newArray = new Todoitem[_items.Length - 1];
+			TodoItem[] newArray = new TodoItem[_items.Length - 1];
 			Array.Copy(_items, 0, newArray, 0, index);
 			Array.Copy(_items, index + 1, newArray, index, _items.Length - index - 1);
 			_items = newArray;
@@ -45,19 +45,19 @@ internal class TodoList
 		}
 	}
 
-	public Todoitem GetItem(int index)
+	public TodoItem GetItem(int index)
 	{
 		return IsValidIndex(index) ? _items[index] : null;
 	}
 
 	// увеличение размера массива при переполнении
-	private Todoitem[] IncreaseArray(Todoitem[] items, Todoitem item)
+	private TodoItem[] IncreaseArray(TodoItem[] items, TodoItem item)
 	{
 		int newLen = Length + 1;
 		
 		if (newLen >= LenghtAllocated)
 		{
-			Todoitem[] newArray = new Todoitem[LenghtAllocated * 2];
+			TodoItem[] newArray = new TodoItem[LenghtAllocated * 2];
 			Array.Copy(items, newArray, items.Length);
 			newArray[Length] = item;
 			_realLenght++;
@@ -81,7 +81,7 @@ internal class TodoList
 		return header;
 	}
 
-	private string GenerateTableRow(Todoitem item, int index, bool showIndex, bool showDone, bool showDate)
+	private string GenerateTableRow(TodoItem item, int index, bool showIndex, bool showDone, bool showDate)
 	{
 		string row = "";
 		if (showIndex) row += $"{index} ";

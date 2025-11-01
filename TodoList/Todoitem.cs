@@ -1,12 +1,12 @@
 ﻿
 namespace TodoList;
-internal class Todoitem
+internal class TodoItem
 {
 	public string Text { get; set; }
 	public bool IsDone { get; set; }
 	public DateTime LastUpdate { get; set; }
 
-	public Todoitem(string text)
+	public TodoItem(string text)
 	{
 		Text = text;
 		IsDone = false;
