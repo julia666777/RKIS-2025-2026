@@ -12,4 +12,9 @@ internal class Profile
 		int currentYear = DateTime.Now.Year;
 		return $"{FirstName} {LastName}, возраст {currentYear - BirthYear}";
 	}
+
+	public string ConvertToFileFormat()
+	{
+		return FirstName + "\n" + LastName + "\n" + BirthYear;
+	}
 }

@@ -7,6 +7,10 @@ public class Program
 	private static Profile profile = new Profile();
 	private static TodoList todoList = new TodoList();
 
+	private const string ProfileInfoPath = "profile.txt";
+	private const string DataDirPath = "data";
+
+
 	public static void Main(string[] args)
     {
 		Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
@@ -55,6 +59,8 @@ public class Program
 		int age = currentYear - profile.BirthYear;
 
         Console.WriteLine($"Добавлен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
+
+		
     }
 
 }
