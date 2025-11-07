@@ -1,6 +1,4 @@
-﻿
-
-namespace TodoList;
+﻿namespace TodoList;
 internal class Profile
 {
 	public string FirstName { get; set; }

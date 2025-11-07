@@ -1,5 +1,4 @@
 ﻿
-
 namespace TodoList;
 public class Program 
 {
@@ -59,8 +58,6 @@ public class Program
 		int age = currentYear - profile.BirthYear;
 
         Console.WriteLine($"Добавлен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
-
-		
     }
 
 }

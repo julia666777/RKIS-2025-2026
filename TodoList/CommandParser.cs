@@ -1,6 +1,4 @@
-﻿
-
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace TodoList;
 internal class CommandParser
@@ -42,16 +40,39 @@ internal class CommandParser
 	};
 	//==========================================================================
 
+	private static string ProfileInfoPath = "profile.txt";
+	private static string DataDirPath = "data";
+	private static string TodolistPath = Path.Combine(DataDirPath, ""); //после реализации SaveTodos поставить в место скобок 
 	public static ICommand Parse(string inputString, TodoList todoList, Profile profile)
 	{
 		if (CompareCommand(inputString, CommandExitName)) return new ExitCommand();
 		else if (CompareCommand(inputString, CommandHelpName)) return new HelpCommand();
-		else if (CompareCommand(inputString, CommandAddName)) return GetAddCommand(inputString, todoList, profile);
+		else if (CompareCommand(inputString, CommandAddName))
+		{
+			var command = GetAddCommand(inputString, todoList, profile);
+			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			return command;
+		}
 		else if (CompareCommand(inputString, CommandProfileName)) return new ProfileCommand(profile);
 		else if (CompareCommand(inputString, CommandViewName)) return GetViewCommand(inputString, todoList, profile);
-		else if (CompareCommand(inputString, CommandDoneName)) return GetDoneCommand(inputString, todoList, profile);
-		else if (CompareCommand(inputString, CommandDeleteName)) return GetDeleteCommand(inputString, todoList, profile);
-		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString, todoList, profile);
+		else if (CompareCommand(inputString, CommandDoneName))
+		{
+			var command = GetDoneCommand(inputString, todoList, profile);
+			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			return command;
+		}
+		else if (CompareCommand(inputString, CommandDeleteName)) 
+		{
+			var command = GetDeleteCommand(inputString, todoList, profile);
+			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			return command;
+		}
+		else if (CompareCommand(inputString, CommandUpdateName)) 
+		{
+			var command = GetUpdateCommand(inputString, todoList, profile);
+			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			return command;
+		}
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString, todoList, profile);
 
 		return new NoneCommand();
@@ -159,7 +180,7 @@ internal class CommandParser
 		return index;
 	}
 
-	
+
 	private static ICommand GetDoneCommand(string inputString, TodoList todoList, Profile profile) => new DoneCommand(todoList, ReadIndexFromCommand(todoList, CommandDoneName, inputString, false));
 	private static ICommand GetDeleteCommand(string inputString, TodoList todoList, Profile profile) => new DeleteCommand(todoList, ReadIndexFromCommand(todoList, CommandDeleteName, inputString, false));
 	private static ICommand GetReadCommand(string inputString, TodoList todoList, Profile profile) => new ReadCommand(todoList, ReadIndexFromCommand(todoList, CommandReadName, inputString, false));

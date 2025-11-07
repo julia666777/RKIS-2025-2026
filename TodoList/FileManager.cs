@@ -1,5 +1,7 @@
 ﻿
 
+using System.Text.Json;
+
 namespace TodoList;
 internal class FileManager
 {
@@ -49,4 +51,10 @@ internal class FileManager
 		throw new NotImplementedException();
 	}
 
+	public static void SaveData(Profile profile, TodoList todoList, string profilePath, string todoPath)
+	{
+		SaveProfile(profile, profilePath);
+		SaveTodos(todoList, todoPath);
+
+	}
 }
