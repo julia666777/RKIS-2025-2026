@@ -3,7 +3,7 @@ namespace TodoList;
 public class Program 
 {
 
-	private static Profile profile = new Profile();
+	private static Profile profile;
 	private static TodoList todoList = new TodoList();
 
 	private const string ProfileInfoPath = "profile.txt";
@@ -46,18 +46,33 @@ public class Program
     // Получение данных пользователя и их обработка 
     private static void InitializeUserData()
     {
-		Console.WriteLine("Введите имя:");
-		profile.FirstName = Console.ReadLine();
+		profile = FileManager.LoadProfile(FileManager.ProfileInfoPath);
 
-        Console.WriteLine("Введите фамилию:");
-		profile.LastName = Console.ReadLine();
+		if (profile == null)
+		{
+			profile = new Profile();
 
-		GetUserAge();
+			Console.WriteLine("Введите имя:");
+			profile.FirstName = Console.ReadLine();
 
-		int currentYear = DateTime.Now.Year;
-		int age = currentYear - profile.BirthYear;
+			Console.WriteLine("Введите фамилию:");
+			profile.LastName = Console.ReadLine();
 
-        Console.WriteLine($"Добавлен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
-    }
+			GetUserAge();
+
+			int currentYear = DateTime.Now.Year;
+			int age = currentYear - profile.BirthYear;
+
+			FileManager.SaveProfile(profile, FileManager.ProfileInfoPath);
+
+			Console.WriteLine($"Добавлен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
+		}
+		else
+		{
+			int currentYear = DateTime.Now.Year;
+			int age = currentYear - profile.BirthYear;
+			Console.WriteLine($"Загружен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
+		}
+	}
 
 }

@@ -1,10 +1,14 @@
 ﻿
-
-using System.Text.Json;
-
 namespace TodoList;
 internal class FileManager
 {
+	public static string DataDirPath { get => "data"; }
+
+	public static string ProfileInfoName { get => "profile.txt"; }
+	public static string ProfileInfoPath { get => Path.Combine(DataDirPath, ProfileInfoName); }
+
+	public static string TodoListFilePath { get => "todo.csv"; }
+	public static string TodolistPath { get => Path.Combine(DataDirPath, TodoListFilePath); }
 
 	public static void EnsureDataDirectory(string dirPath)
 	{
@@ -17,6 +21,7 @@ internal class FileManager
 	public static void SaveProfile(Profile profile, string filePath)
 	{
 		string textOfProfile = profile.ConvertToFileFormat();
+		EnsureDataDirectory(Path.GetDirectoryName(filePath).ToString());
 		File.WriteAllText(filePath, textOfProfile);
 	}
 

@@ -40,9 +40,6 @@ internal class CommandParser
 	};
 	//==========================================================================
 
-	private static string ProfileInfoPath = "profile.txt";
-	private static string DataDirPath = "data";
-	private static string TodolistPath = Path.Combine(DataDirPath, ""); //после реализации SaveTodos поставить в место скобок 
 	public static ICommand Parse(string inputString, TodoList todoList, Profile profile)
 	{
 		if (CompareCommand(inputString, CommandExitName)) return new ExitCommand();
@@ -50,7 +47,7 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandAddName))
 		{
 			var command = GetAddCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandProfileName)) return new ProfileCommand(profile);
@@ -58,19 +55,19 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandDoneName))
 		{
 			var command = GetDoneCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandDeleteName)) 
 		{
 			var command = GetDeleteCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandUpdateName)) 
 		{
 			var command = GetUpdateCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, ProfileInfoPath, TodolistPath);
+			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString, todoList, profile);
@@ -104,7 +101,7 @@ internal class CommandParser
 		// execution
 		if (!multiline)
 		{
-			if (IsTaskValidToAdd(userEnteredTask[1]))
+			if (userEnteredTask.Length > 1 && IsTaskValidToAdd(userEnteredTask[1]))
 			{
 				return new AddCommand(todoList, multiline, userEnteredTask[1]);
 			}
