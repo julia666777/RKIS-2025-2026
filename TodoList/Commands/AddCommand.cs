@@ -32,5 +32,7 @@ internal class AddCommand : ICommand
 		{
 			_todoList.Add(new TodoItem(Task));
 		}
+
+		Console.WriteLine($"Добавлена новая задача {Task}.");
 	}
 }

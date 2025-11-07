@@ -48,12 +48,45 @@ internal class FileManager
 
 	public static void SaveTodos(TodoList todos, string filePath)
 	{
-		throw new NotImplementedException();
+		string lines = "";
+
+		for (int i = 0; i < todos.Length; i++)
+		{
+			lines += $"{todos.GetItem(i).Text};{todos.GetItem(i).IsDone};{todos.GetItem(i).LastUpdate}\n";
+		}
+
+		File.WriteAllText(TodolistPath, lines);
 	}
 
 	public static TodoList LoadTodos(string filePath)
 	{
-		throw new NotImplementedException();
+		if (!File.Exists(filePath))
+			return null;
+
+		var lines = File.ReadAllLines(filePath);
+		TodoList list = new TodoList();
+
+		foreach (var line in lines)
+		{
+			var args = line.Split(';', 3);
+			if (args.Length > 2)
+			{
+				var text = args[0];
+
+				bool status = false;
+				bool.TryParse(args[1], out status);
+
+				var date = DateTime.Now;
+				DateTime.TryParse(args[2], out date);
+
+				TodoItem item = new TodoItem(text);
+				item.IsDone = status;
+				item.LastUpdate = date;
+				list.Add(item);
+			}
+		}
+
+		return list;
 	}
 
 	public static void SaveData(Profile profile, TodoList todoList, string profilePath, string todoPath)

@@ -6,7 +6,7 @@ namespace TodoList
     {
 		public void Execute()
 		{
-			Environment.Exit (0);	
+			Environment.Exit(0);	
 		}
 	}
 }

@@ -40,6 +40,7 @@ internal class CommandParser
 	};
 	//==========================================================================
 
+
 	public static ICommand Parse(string inputString, TodoList todoList, Profile profile)
 	{
 		if (CompareCommand(inputString, CommandExitName)) return new ExitCommand();
@@ -47,7 +48,6 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandAddName))
 		{
 			var command = GetAddCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandProfileName)) return new ProfileCommand(profile);
@@ -55,19 +55,16 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandDoneName))
 		{
 			var command = GetDoneCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandDeleteName)) 
 		{
 			var command = GetDeleteCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandUpdateName)) 
 		{
 			var command = GetUpdateCommand(inputString, todoList, profile);
-			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 			return command;
 		}
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString, todoList, profile);

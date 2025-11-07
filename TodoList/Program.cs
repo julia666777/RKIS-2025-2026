@@ -4,10 +4,7 @@ public class Program
 {
 
 	private static Profile profile;
-	private static TodoList todoList = new TodoList();
-
-	private const string ProfileInfoPath = "profile.txt";
-	private const string DataDirPath = "data";
+	private static TodoList todoList;
 
 
 	public static void Main(string[] args)
@@ -15,12 +12,15 @@ public class Program
 		Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
 
 		InitializeUserData();
+		InitializeTasks();
 
-        while (true)
+
+		while (true)
         {
             var commandLine = Console.ReadLine();
 			var command = CommandParser.Parse(commandLine, todoList, profile);
 			command.Execute();
+			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
 		}
     }
 
@@ -73,6 +73,13 @@ public class Program
 			int age = currentYear - profile.BirthYear;
 			Console.WriteLine($"Загружен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
 		}
+	}
+
+	private static void InitializeTasks()
+	{
+		todoList = FileManager.LoadTodos(FileManager.TodolistPath);
+		if (todoList == null)
+			todoList = new TodoList();
 	}
 
 }
