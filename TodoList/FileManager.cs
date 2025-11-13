@@ -53,7 +53,7 @@ internal class FileManager
 		for (int i = 0; i < todos.Length; i++)
 		{
 			var item = todos.GetItem(i);
-			lines += $"{item.IsDone};{item.LastUpdate};{item.Text}\n";
+			lines += $"{item.Status};{item.LastUpdate};{item.Text}\n";
 		}
 
 		File.WriteAllText(TodolistPath, lines);
@@ -72,8 +72,7 @@ internal class FileManager
 			var args = line.Split(';', 3);
 			if (args.Length > 2)
 			{
-				bool status = false;
-				bool.TryParse(args[0], out status);
+				TodoStatus status = Enum.Parse<TodoStatus>(args[0]);
 
 				var date = DateTime.Now;
 				DateTime.TryParse(args[1], out date);
@@ -81,7 +80,7 @@ internal class FileManager
 				var text = args[2];
 
 				TodoItem item = new TodoItem(text);
-				item.IsDone = status;
+				item.Status = status;
 				item.LastUpdate = date;
 				list.Add(item);
 			}

@@ -3,35 +3,22 @@
 namespace TodoList;
 internal class TodoList
 {
-	private const int ItemsStartLen = 2;
-	private TodoItem[] _items = new TodoItem[ItemsStartLen];
+	private List<TodoItem> _items = new List<TodoItem>();
 
 	// Количество задач в списке
-	private int _realLenght = 0;
-	public int Length { get => _realLenght; }
-	public int LenghtAllocated { get => _items.Length; }
+	public int Length { get => _items.Count; }
+	public int LenghtAllocated { get => _items.Count; }
 
 	//добавление задачи
 	public void Add(TodoItem item)
 	{
-		_items = IncreaseArray(_items, item);
+		_items.Add(item);
 	}
 
 	//удаление
 	public void Delete(int index)
 	{
-		if (index >= 0 && index < _items.Length)
-		{
-			TodoItem[] newArray = new TodoItem[_items.Length - 1];
-			Array.Copy(_items, 0, newArray, 0, index);
-			Array.Copy(_items, index + 1, newArray, index, _items.Length - index - 1);
-			_items = newArray;
-			_realLenght--;
-		}
-		else
-		{
-			Console.WriteLine("Неверный индекс");
-		}
+		_items.RemoveAt(index);
 	}
 
 	public void View(bool showIndex, bool showDone, bool showDate)
@@ -43,30 +30,15 @@ internal class TodoList
 		}
 	}
 
+	public IEnumerator<TodoItem> GetEnumerator()
+	{
+		foreach (TodoItem item in _items) 
+			yield return item;
+	}
+
 	public TodoItem GetItem(int index)
 	{
 		return IsValidIndex(index) ? _items[index] : null;
-	}
-
-	// увеличение размера массива при переполнении
-	private TodoItem[] IncreaseArray(TodoItem[] items, TodoItem item)
-	{
-		int newLen = Length + 1;
-		
-		if (newLen >= LenghtAllocated)
-		{
-			TodoItem[] newArray = new TodoItem[LenghtAllocated * 2];
-			Array.Copy(items, newArray, items.Length);
-			newArray[Length] = item;
-			_realLenght++;
-			return newArray;
-		}
-		else
-		{
-			_items[Length] = item;
-			_realLenght++;
-			return _items;
-		}
 	}
 
 	private string GenerateTableHeader(bool showIndex, bool showDone, bool showDate)
@@ -84,10 +56,14 @@ internal class TodoList
 		string row = "";
 		if (showIndex) row += $"{index} ";
 		row += $"\"{item.GetShortText()}\" ";
-		if (showDone) row += $"{item.IsDone} ";
+		if (showDone) row += $"{item.Status} ";
 		if (showDate) row += $"{item.LastUpdate.ToShortDateString()} ";
 		return row;
 	}
 
 	public bool IsValidIndex(int index) => index >= 0 && index < Length;
+
+	public void Done(int index) => _items[index].MarkDone();
+
+	public void SetStatus(int index, TodoStatus status) => _items[index].Status = status;
 }

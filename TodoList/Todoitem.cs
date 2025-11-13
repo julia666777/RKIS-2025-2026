@@ -3,19 +3,22 @@ namespace TodoList;
 internal class TodoItem
 {
 	public string Text { get; set; }
-	public bool IsDone { get; set; }
+
+	public TodoStatus Status { get; set; }
+	public bool IsDone => Status == TodoStatus.Completed;
+
 	public DateTime LastUpdate { get; set; }
 
 	public TodoItem(string text)
 	{
 		Text = text;
-		IsDone = false;
+		Status = TodoStatus.NotStarted;
 		LastUpdate = DateTime.Now;
 	}
 
 	public void MarkDone()
 	{
-		IsDone = true;
+		Status = TodoStatus.Completed;
 		LastUpdate = DateTime.Now;
 	}
 
@@ -32,14 +35,12 @@ internal class TodoItem
 
 	public string GetShortInfo()
 	{
-		string status = IsDone ? "Done" : "Pending";
 		string truncatedText = GetShortText();
-		return $"{truncatedText} ({status}, {LastUpdate.ToShortDateString()})";
+		return $"{truncatedText} ({Status}, {LastUpdate.ToShortDateString()})";
 	}
 
 	public string GetFullInfo()
 	{
-		string status = IsDone ? "Выполнено" : "В процессе";
-		return $"Задача: {Text}\nСтатус: {status}\nПоследнее обновление: {LastUpdate}";
+		return $"Задача: {Text}\nСтатус: {Status}\nПоследнее обновление: {LastUpdate}";
 	}
 }

@@ -15,6 +15,7 @@ internal class CommandParser
 	private const string CommandDeleteName = "delete";
 	private const string CommandUpdateName = "update";
 	private const string CommandReadName = "read";
+	private const string CommandStatusName = "status";
 
 	private static string[] CommandAddMultilineFlags = new string[]
 	{
@@ -203,5 +204,8 @@ internal class CommandParser
 		else
 			return GetUncorrect();
 	}
+
+	// TODO: make status command
+	private static ICommand GetStatusCommand(string inputString, TodoList todoList, Profile profile) => new NoneCommand();
 
 }
