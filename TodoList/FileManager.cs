@@ -53,7 +53,7 @@ internal class FileManager
 		for (int i = 0; i < todos.Length; i++)
 		{
 			var item = todos.GetItem(i);
-			lines += $"{item.Status};{item.LastUpdate};{item.Text}\n";
+			lines += $"{item.Status.ToString()};{item.LastUpdate};{item.Text}\n";
 		}
 
 		File.WriteAllText(TodolistPath, lines);
@@ -72,20 +72,21 @@ internal class FileManager
 			var args = line.Split(';', 3);
 			if (args.Length > 2)
 			{
-				TodoStatus status = Enum.Parse<TodoStatus>(args[0]);
-
+				TodoStatus status;
+				if (!Enum.TryParse(args[0], true, out status))
+				{
+					Console.WriteLine($"Предупреждение: Не удалось разобрать статус '{args[0]}'. Использование NotStarted.");
+					status = TodoStatus.NotStarted; // Дефолт. статус в случае ошибки
+				}
 				var date = DateTime.Now;
 				DateTime.TryParse(args[1], out date);
-
 				var text = args[2];
-
 				TodoItem item = new TodoItem(text);
 				item.Status = status;
 				item.LastUpdate = date;
 				list.Add(item);
 			}
 		}
-
 		return list;
 	}
 

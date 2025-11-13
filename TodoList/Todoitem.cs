@@ -21,12 +21,6 @@ internal class TodoItem
 		Status = newStatus;
 		LastUpdate = DateTime.Now;
 	}
-
-	public void MarkDone()
-	{
-		SetStatus(TodoStatus.Completed);
-	}
-
 	public void UpdateText(string newText)
 	{
 		Text = newText;
