@@ -46,28 +46,13 @@ internal class CommandParser
 	{
 		if (CompareCommand(inputString, CommandExitName)) return new ExitCommand();
 		else if (CompareCommand(inputString, CommandHelpName)) return new HelpCommand();
-		else if (CompareCommand(inputString, CommandAddName))
-		{
-			var command = GetAddCommand(inputString, todoList, profile);
-			return command;
-		}
+		else if (CompareCommand(inputString, CommandAddName)) return GetAddCommand(inputString, todoList, profile);
+		else if (CompareCommand(inputString, CommandStatusName)) return GetStatusCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandProfileName)) return new ProfileCommand(profile);
 		else if (CompareCommand(inputString, CommandViewName)) return GetViewCommand(inputString, todoList, profile);
-		else if (CompareCommand(inputString, CommandDoneName))
-		{
-			var command = GetDoneCommand(inputString, todoList, profile);
-			return command;
-		}
-		else if (CompareCommand(inputString, CommandDeleteName)) 
-		{
-			var command = GetDeleteCommand(inputString, todoList, profile);
-			return command;
-		}
-		else if (CompareCommand(inputString, CommandUpdateName))
-		{
-			var command = GetUpdateCommand(inputString, todoList, profile);
-			return command;
-		}
+		else if (CompareCommand(inputString, CommandDoneName)) return GetDoneCommand(inputString, todoList, profile);
+		else if (CompareCommand(inputString, CommandDeleteName)) return GetDeleteCommand(inputString, todoList, profile);
+		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString, todoList, profile);
 
 		return new NoneCommand();
