@@ -16,10 +16,15 @@ internal class TodoItem
 		LastUpdate = DateTime.Now;
 	}
 
+	public void SetStatus(TodoStatus newStatus)
+	{
+		Status = newStatus;
+		LastUpdate = DateTime.Now;
+	}
+
 	public void MarkDone()
 	{
-		Status = TodoStatus.Completed;
-		LastUpdate = DateTime.Now;
+		SetStatus(TodoStatus.Completed);
 	}
 
 	public void UpdateText(string newText)

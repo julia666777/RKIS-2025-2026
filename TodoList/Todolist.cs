@@ -32,7 +32,7 @@ internal class TodoList
 
 	public IEnumerator<TodoItem> GetEnumerator()
 	{
-		foreach (TodoItem item in _items) 
+		foreach (TodoItem item in _items)
 			yield return item;
 	}
 
@@ -63,7 +63,15 @@ internal class TodoList
 
 	public bool IsValidIndex(int index) => index >= 0 && index < Length;
 
-	public void Done(int index) => _items[index].MarkDone();
-
-	public void SetStatus(int index, TodoStatus status) => _items[index].Status = status;
+	public void SetStatus(int index, TodoStatus status)
+	{
+		if (IsValidIndex(index))
+		{
+			_items[index].SetStatus(status);
+		}
+		else
+		{
+			Console.WriteLine($"Ошибка: Некорректный индекс для установки статуса: {index}");
+		}
+	}
 }

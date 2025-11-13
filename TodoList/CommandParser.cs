@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using TodoList.Commands;
 
 namespace TodoList;
 internal class CommandParser
@@ -119,7 +120,7 @@ internal class CommandParser
 		bool update = LineFlagsFounded(inputString, CommandViewUpdateFlags);
 		bool all = LineFlagsFounded(inputString, CommandViewAllFlags);
 
-		// checking for multiflags 
+		// checking for multiflags
 		foreach (var i in userEnteredCommand)
 		{
 			if (i.StartsWith("-"))
@@ -140,8 +141,7 @@ internal class CommandParser
 
 		if (all)
 			indexed = statused = update = true;
-
-		return new ViewCommand(todoList, indexed || all, update || all, statused || all);
+		return new ViewCommand(todoList, indexed, statused, update);
 	}
 
 	private static int ReadIndexFromCommand(TodoList todoList, string commandName, string command, bool checkForNumOfTasks = true)
@@ -161,7 +161,11 @@ internal class CommandParser
 	}
 
 
-	private static ICommand GetDoneCommand(string inputString, TodoList todoList, Profile profile) => new DoneCommand(todoList, ReadIndexFromCommand(todoList, CommandDoneName, inputString, false));
+	private static ICommand GetDoneCommand(string inputString, TodoList todoList, Profile profile)
+	{
+		int index = ReadIndexFromCommand(todoList, CommandDoneName, inputString, false);
+		return new StatusCommand(todoList, index, TodoStatus.Completed);
+	}
 	private static ICommand GetDeleteCommand(string inputString, TodoList todoList, Profile profile) => new DeleteCommand(todoList, ReadIndexFromCommand(todoList, CommandDeleteName, inputString, false));
 	private static ICommand GetReadCommand(string inputString, TodoList todoList, Profile profile) => new ReadCommand(todoList, ReadIndexFromCommand(todoList, CommandReadName, inputString, false));
 
@@ -191,6 +195,24 @@ internal class CommandParser
 	}
 
 	// TODO: make status command
-	private static ICommand GetStatusCommand(string inputString, TodoList todoList, Profile profile) => new NoneCommand();
-
+	private static ICommand GetStatusCommand(string inputString, TodoList todoList, Profile profile)
+	{
+		var args = inputString.Split(' ', 3); 
+		if (args.Length < 3)
+		{
+			Console.WriteLine("Ошибка: Команда требует индекс задачи и новый статус. Пример: status 0 InProgress");
+			return GetUncorrect();
+		}
+		if (!int.TryParse(args[1], out int index))
+		{
+			Console.WriteLine($"Ошибка: '{args[1]}' не является корректным индексом задачи.");
+			return GetUncorrect();
+		}
+		if (!Enum.TryParse(args[2], true, out TodoStatus newStatus))
+		{
+			Console.WriteLine($"Ошибка: '{args[2]}' не является корректным статусом. Доступные статусы: {string.Join(", ", Enum.GetNames(typeof(TodoStatus)))}");
+			return GetUncorrect();
+		}
+		return new StatusCommand(todoList, index, newStatus);
+	}
 }
