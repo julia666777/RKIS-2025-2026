@@ -6,7 +6,6 @@ public class Program
 	private static Profile profile;
 	private static TodoList todoList;
 
-
 	public static void Main(string[] args)
     {
 		Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");

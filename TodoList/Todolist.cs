@@ -83,7 +83,7 @@ internal class TodoList
 	{
 		string row = "";
 		if (showIndex) row += $"{index} ";
-		row += $"\"{item.Text}\" ";
+		row += $"\"{item.GetShortText()}\" ";
 		if (showDone) row += $"{item.IsDone} ";
 		if (showDate) row += $"{item.LastUpdate.ToShortDateString()} ";
 		return row;

@@ -2,13 +2,13 @@
 namespace TodoList;
 internal class FileManager
 {
-	public static string DataDirPath { get => "data"; }
+	public static string DataDirPath => "data";
 
-	public static string ProfileInfoName { get => "profile.txt"; }
-	public static string ProfileInfoPath { get => Path.Combine(DataDirPath, ProfileInfoName); }
+	public static string ProfileInfoName => "profile.txt";
+	public static string ProfileInfoPath => Path.Combine(DataDirPath, ProfileInfoName);
 
-	public static string TodoListFilePath { get => "todo.csv"; }
-	public static string TodolistPath { get => Path.Combine(DataDirPath, TodoListFilePath); }
+	public static string TodoListFilePath => "todo.csv";
+	public static string TodolistPath => Path.Combine(DataDirPath, TodoListFilePath);
 
 	public static void EnsureDataDirectory(string dirPath)
 	{
@@ -52,7 +52,8 @@ internal class FileManager
 
 		for (int i = 0; i < todos.Length; i++)
 		{
-			lines += $"{todos.GetItem(i).Text};{todos.GetItem(i).IsDone};{todos.GetItem(i).LastUpdate}\n";
+			var item = todos.GetItem(i);
+			lines += $"{item.IsDone};{item.LastUpdate};{item.Text}\n";
 		}
 
 		File.WriteAllText(TodolistPath, lines);
@@ -71,13 +72,13 @@ internal class FileManager
 			var args = line.Split(';', 3);
 			if (args.Length > 2)
 			{
-				var text = args[0];
-
 				bool status = false;
-				bool.TryParse(args[1], out status);
+				bool.TryParse(args[0], out status);
 
 				var date = DateTime.Now;
-				DateTime.TryParse(args[2], out date);
+				DateTime.TryParse(args[1], out date);
+
+				var text = args[2];
 
 				TodoItem item = new TodoItem(text);
 				item.IsDone = status;
@@ -93,6 +94,5 @@ internal class FileManager
 	{
 		SaveProfile(profile, profilePath);
 		SaveTodos(todoList, todoPath);
-
 	}
 }

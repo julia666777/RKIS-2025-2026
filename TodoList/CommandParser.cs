@@ -62,7 +62,7 @@ internal class CommandParser
 			var command = GetDeleteCommand(inputString, todoList, profile);
 			return command;
 		}
-		else if (CompareCommand(inputString, CommandUpdateName)) 
+		else if (CompareCommand(inputString, CommandUpdateName))
 		{
 			var command = GetUpdateCommand(inputString, todoList, profile);
 			return command;

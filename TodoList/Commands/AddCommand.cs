@@ -17,6 +17,8 @@ internal class AddCommand : ICommand
 
 	public void Execute()
 	{
+		TodoItem item = new TodoItem(Task);
+
 		if (_multiline)
 		{
 			Task = "";
@@ -26,13 +28,13 @@ internal class AddCommand : ICommand
 				Task += line + " ";
 			}
 
-			_todoList.Add(new TodoItem(Task));
+			_todoList.Add(item);
 		}
 		else
 		{
-			_todoList.Add(new TodoItem(Task));
+			_todoList.Add(item);
 		}
 
-		Console.WriteLine($"Добавлена новая задача {Task}.");
+		Console.WriteLine($"Добавлена новая задача {item.GetShortText()}.");
 	}
 }

@@ -25,10 +25,15 @@ internal class TodoItem
 		LastUpdate = DateTime.Now;
 	}
 
+	public string GetShortText()
+	{
+		return Text.Length > 30 ? Text.Substring(0, 30) + "..." : Text;
+	}
+
 	public string GetShortInfo()
 	{
 		string status = IsDone ? "Done" : "Pending";
-		string truncatedText = Text.Length > 30 ? Text.Substring(0, 30) + "..." : Text;
+		string truncatedText = GetShortText();
 		return $"{truncatedText} ({status}, {LastUpdate.ToShortDateString()})";
 	}
 
