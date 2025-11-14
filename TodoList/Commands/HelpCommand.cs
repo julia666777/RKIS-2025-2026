@@ -15,7 +15,7 @@ namespace TodoList
 				done - отметить задачу выполненной
 				delete - удалить задачу
 				update - обновить задачу
-				status - по смотреть статус задачи
+				status - <idx> изменить статус задачи {TodoStatus.Completed}, {TodoStatus.Failed}, {TodoStatus.NotStarted}, {TodoStatus.InProgress}
 				exit - выход
 				"""); 
 			}

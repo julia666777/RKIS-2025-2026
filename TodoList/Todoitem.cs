@@ -38,6 +38,8 @@ internal class TodoItem
 		return $"{truncatedText} ({Status}, {LastUpdate.ToShortDateString()})";
 	}
 
+	public void MarkDone() => Status = TodoStatus.Completed;
+
 	public string GetFullInfo()
 	{
 		return $"Задача: {Text}\nСтатус: {Status}\nПоследнее обновление: {LastUpdate}";
