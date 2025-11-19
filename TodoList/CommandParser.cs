@@ -9,7 +9,6 @@ internal class CommandParser
 	//==========================================================================
 	private const string CommandAddName = "add";
 	private const string CommandProfileName = "profile";
-	private const string CommandViewName = "view";
 	private const string CommandExitName = "exit";
 	private const string CommandHelpName = "help";
 	private const string CommandDeleteName = "delete";
@@ -49,7 +48,6 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandAddName)) return GetAddCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandStatusName)) return GetStatusCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandProfileName)) return new ProfileCommand(profile);
-		else if (CompareCommand(inputString, CommandViewName)) return GetViewCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandDeleteName)) return GetDeleteCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString, todoList, profile);
@@ -93,53 +91,6 @@ internal class CommandParser
 		{
 			return new AddCommand(todoList, multiline, "");
 		}
-	}
-
-	private static bool LineFlagsFounded(string command, string[] flags)
-	{
-		bool flag = false;
-
-		foreach (var i in flags)
-		{
-			if (command.Contains(i))
-				flag = true;
-		}
-
-		return flag;
-	}
-
-	private static ICommand GetViewCommand(string inputString, TodoList todoList, Profile profile)
-	{
-		string[] userEnteredCommand = inputString.Split(' ');
-
-		// checking for flags
-		bool indexed = LineFlagsFounded(inputString, CommandViewIndexFlags);
-		bool statused = LineFlagsFounded(inputString, CommandViewStatusFlags);
-		bool update = LineFlagsFounded(inputString, CommandViewUpdateFlags);
-		bool all = LineFlagsFounded(inputString, CommandViewAllFlags);
-
-		// checking for multiflags
-		foreach (var i in userEnteredCommand)
-		{
-			if (i.StartsWith("-"))
-			{
-				for (int j = 1; j < i.Length; j++)
-				{
-					if (i[j] == CommandViewIndexFlags[1][1])
-						indexed = true;
-					if (i[j] == CommandViewStatusFlags[1][1])
-						statused = true;
-					if (i[j] == CommandViewUpdateFlags[1][1])
-						update = true;
-					if (i[j] == CommandViewAllFlags[1][1])
-						all = true;
-				}
-			}
-		}
-
-		if (all)
-			indexed = statused = update = true;
-		return new ViewCommand(todoList, indexed, statused, update);
 	}
 
 	private static int ReadIndexFromCommand(TodoList todoList, string commandName, string command, bool checkForNumOfTasks = true)
