@@ -44,9 +44,9 @@ internal class TodoList
 	{
 		string header = "";
 		if (showIndex) header += "Index ";
-		header += "Text ";
-		if (showDone) header += "Done ";
+		if (showDone) header += "Status ";
 		if (showDate) header += "Date ";
+		header += "Text";
 		return header;
 	}
 
@@ -54,9 +54,9 @@ internal class TodoList
 	{
 		string row = "";
 		if (showIndex) row += $"{index} ";
-		row += $"\"{item.GetShortText()}\" ";
 		if (showDone) row += $"{item.Status} ";
 		if (showDate) row += $"{item.LastUpdate.ToShortDateString()} ";
+		row += $"\"{item.GetShortText()}\" ";
 		return row;
 	}
 

@@ -25,9 +25,10 @@ internal class AddCommand : ICommand
 
 			for (var line = Console.ReadLine(); line != CommandAddEndMark; line = Console.ReadLine())
 			{
-				Task += line + " ";
+				Task += line + "\n";
 			}
 
+			item.Text = Task;
 			_todoList.Add(item);
 		}
 		else
@@ -35,6 +36,6 @@ internal class AddCommand : ICommand
 			_todoList.Add(item);
 		}
 
-		Console.WriteLine($"Добавлена новая задача {item.GetShortText()}.");
+		Console.WriteLine($"Добавлена новая задача {item.GetShortText()}");
 	}
 }

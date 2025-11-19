@@ -9,6 +9,7 @@ internal class FileManager
 
 	public static string TodoListFilePath => "todo.csv";
 	public static string TodolistPath => Path.Combine(DataDirPath, TodoListFilePath);
+	private static string _multilineToken = "0xf4afff01fab670c";
 
 	public static void EnsureDataDirectory(string dirPath)
 	{
@@ -46,6 +47,22 @@ internal class FileManager
 		return profile;
 	}
 
+	private static string TextStringConvert(string text)
+	{
+		var args = text.Split('\n');
+		string output = "";
+		if (args.Length > 1)
+		{
+			foreach (var i in args)
+			{
+				output += i + _multilineToken;
+			}
+		}
+		else
+			output = text;
+		return output;
+	}
+
 	public static void SaveTodos(TodoList todos, string filePath)
 	{
 		string lines = "";
@@ -53,10 +70,23 @@ internal class FileManager
 		for (int i = 0; i < todos.Length; i++)
 		{
 			var item = todos.GetItem(i);
-			lines += $"{item.Status.ToString()};{item.LastUpdate};{item.Text}\n";
+			lines += $"{item.Status.ToString()};{item.LastUpdate};{TextStringConvert(item.Text)}\n";
 		}
 
 		File.WriteAllText(TodolistPath, lines);
+	}
+
+	private static string ParseFileText(string text)
+	{
+		if (text.Contains(_multilineToken))
+		{
+			var args = text.Split(_multilineToken, StringSplitOptions.RemoveEmptyEntries);
+			string output = "";
+			foreach (var i in args)
+				output += i + "\n";
+			return output;
+		}
+		else return text;
 	}
 
 	public static TodoList LoadTodos(string filePath)
@@ -78,10 +108,13 @@ internal class FileManager
 					Console.WriteLine($"Предупреждение: Не удалось разобрать статус '{args[0]}'. Использование NotStarted.");
 					status = TodoStatus.NotStarted; // Дефолт. статус в случае ошибки
 				}
+
 				var date = DateTime.Now;
 				DateTime.TryParse(args[1], out date);
+
 				var text = args[2];
-				TodoItem item = new TodoItem(text);
+
+				TodoItem item = new TodoItem(ParseFileText(text));
 				item.Status = status;
 				item.LastUpdate = date;
 				list.Add(item);
