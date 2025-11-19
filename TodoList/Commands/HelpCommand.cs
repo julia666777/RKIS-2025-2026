@@ -12,7 +12,6 @@ namespace TodoList
 				add -m - добавить задачу в многострочном режиме
 				view -i, -s, -d, -a - показать задачи
 				read - просмотреть полный текст задачи
-				done - отметить задачу выполненной
 				delete - удалить задачу
 				update - обновить задачу
 				status - <idx> изменить статус задачи {TodoStatus.Completed}, {TodoStatus.Failed}, {TodoStatus.NotStarted}, {TodoStatus.InProgress}

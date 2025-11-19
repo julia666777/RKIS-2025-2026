@@ -12,7 +12,6 @@ internal class CommandParser
 	private const string CommandViewName = "view";
 	private const string CommandExitName = "exit";
 	private const string CommandHelpName = "help";
-	private const string CommandDoneName = "done";
 	private const string CommandDeleteName = "delete";
 	private const string CommandUpdateName = "update";
 	private const string CommandReadName = "read";
@@ -51,7 +50,6 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandStatusName)) return GetStatusCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandProfileName)) return new ProfileCommand(profile);
 		else if (CompareCommand(inputString, CommandViewName)) return GetViewCommand(inputString, todoList, profile);
-		else if (CompareCommand(inputString, CommandDoneName)) return GetDoneCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandDeleteName)) return GetDeleteCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString, todoList, profile);
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString, todoList, profile);
@@ -160,12 +158,6 @@ internal class CommandParser
 		return index;
 	}
 
-
-	private static ICommand GetDoneCommand(string inputString, TodoList todoList, Profile profile)
-	{
-		int index = ReadIndexFromCommand(todoList, CommandDoneName, inputString, false);
-		return new StatusCommand(todoList, index, TodoStatus.Completed);
-	}
 	private static ICommand GetDeleteCommand(string inputString, TodoList todoList, Profile profile) => new DeleteCommand(todoList, ReadIndexFromCommand(todoList, CommandDeleteName, inputString, false));
 	private static ICommand GetReadCommand(string inputString, TodoList todoList, Profile profile) => new ReadCommand(todoList, ReadIndexFromCommand(todoList, CommandReadName, inputString, false));
 
