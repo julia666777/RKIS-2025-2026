@@ -3,7 +3,7 @@
 namespace TodoList;
 internal class ReadCommand : IndexedCommand
 {
-	public ReadCommand(TodoList todoList, int index) : base(todoList, index) { }
+	public ReadCommand(int index) : base(index) { }
 
 	protected override void SubExecute(TodoItem item)
 	{

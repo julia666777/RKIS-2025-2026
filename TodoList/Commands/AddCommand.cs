@@ -2,15 +2,13 @@
 namespace TodoList;
 internal class AddCommand : ICommand
 {
-	private TodoList _todoList;
 	private bool _multiline;
 	public string Task { get; private set; }
 
 	public static string CommandAddEndMark = "!end";
 
-	public AddCommand(TodoList todoList, bool multiline, string task)
+	public AddCommand(bool multiline, string task)
 	{
-		_todoList = todoList;
 		_multiline = multiline;
 		Task = task;
 	}
@@ -29,11 +27,11 @@ internal class AddCommand : ICommand
 			}
 
 			item.Text = Task;
-			_todoList.Add(item);
+			AppInfo.Todos.Add(item);
 		}
 		else
 		{
-			_todoList.Add(item);
+			AppInfo.Todos.Add(item);
 		}
 
 		Console.WriteLine($"Добавлена новая задача {item.GetShortText()}");

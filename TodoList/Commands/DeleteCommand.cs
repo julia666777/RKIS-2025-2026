@@ -4,12 +4,13 @@ namespace TodoList
 {
 	internal class DeleteCommand : IndexedCommand
 	{
-		public DeleteCommand(TodoList todoList, int index) : base(todoList, index)
+		public DeleteCommand(int index) : base(index)
 		{
 		}
+
 		protected override void SubExecute(TodoItem item)
 		{
-			TodoList.Delete(Index);
+			AppInfo.Todos.Delete(Index);
 			Console.WriteLine("Задача успешно удалена");
 		}
 	}

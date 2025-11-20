@@ -4,7 +4,7 @@ internal class UpdateCommand : IndexedCommand
 {
 	private string _task;
 
-	public UpdateCommand(TodoList todoList, int index, string task) : base(todoList, index)
+	public UpdateCommand(int index, string task) : base(index)
 	{
 		_task = task;
 	}

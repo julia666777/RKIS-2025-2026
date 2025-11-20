@@ -19,9 +19,9 @@ internal class FileManager
 		}
 	}
 
-	public static void SaveProfile(Profile profile, string filePath)
+	public static void SaveProfile(string filePath)
 	{
-		string textOfProfile = profile.ConvertToFileFormat();
+		string textOfProfile = AppInfo.CurrentProfile.ConvertToFileFormat();
 		EnsureDataDirectory(Path.GetDirectoryName(filePath).ToString());
 		File.WriteAllText(filePath, textOfProfile);
 	}
@@ -63,13 +63,13 @@ internal class FileManager
 		return output;
 	}
 
-	public static void SaveTodos(TodoList todos, string filePath)
+	public static void SaveTodos(string filePath)
 	{
 		string lines = "";
 
-		for (int i = 0; i < todos.Length; i++)
+		for (int i = 0; i < AppInfo.Todos.Length; i++)
 		{
-			var item = todos.GetItem(i);
+			var item = AppInfo.Todos.GetItem(i);
 			lines += $"{item.Status.ToString()};{item.LastUpdate};{TextStringConvert(item.Text)}\n";
 		}
 
@@ -123,9 +123,9 @@ internal class FileManager
 		return list;
 	}
 
-	public static void SaveData(Profile profile, TodoList todoList, string profilePath, string todoPath)
+	public static void SaveData(string profilePath, string todoPath)
 	{
-		SaveProfile(profile, profilePath);
-		SaveTodos(todoList, todoPath);
+		SaveProfile(profilePath);
+		SaveTodos(todoPath);
 	}
 }

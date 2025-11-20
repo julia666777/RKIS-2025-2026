@@ -3,9 +3,6 @@ namespace TodoList;
 public class Program 
 {
 
-	private static Profile profile;
-	private static TodoList todoList;
-
 	public static void Main(string[] args)
     {
 		Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
@@ -13,13 +10,12 @@ public class Program
 		InitializeUserData();
 		InitializeTasks();
 
-
 		while (true)
         {
             var commandLine = Console.ReadLine();
-			var command = CommandParser.Parse(commandLine, todoList, profile);
+			var command = CommandParser.Parse(commandLine);
 			command.Execute();
-			FileManager.SaveData(profile, todoList, FileManager.ProfileInfoPath, FileManager.TodolistPath);
+			FileManager.SaveData(FileManager.ProfileInfoPath, FileManager.TodolistPath);
 		}
     }
 
@@ -31,8 +27,8 @@ public class Program
 		bool isBirthYearValid = int.TryParse(birthYearString, out int birthYear);
 
 		if (isBirthYearValid)
-		{ 
-			profile.BirthYear = birthYear;	
+		{
+			AppInfo.CurrentProfile.BirthYear = birthYear;	
 			return; 
 		}
 		else
@@ -45,40 +41,40 @@ public class Program
     // Получение данных пользователя и их обработка 
     private static void InitializeUserData()
     {
-		profile = FileManager.LoadProfile(FileManager.ProfileInfoPath);
+		AppInfo.CurrentProfile = FileManager.LoadProfile(FileManager.ProfileInfoPath);
 
-		if (profile == null)
+		if (AppInfo.CurrentProfile == null)
 		{
-			profile = new Profile();
+			AppInfo.CurrentProfile = new Profile();
 
 			Console.WriteLine("Введите имя:");
-			profile.FirstName = Console.ReadLine();
+			AppInfo.CurrentProfile.FirstName = Console.ReadLine();
 
 			Console.WriteLine("Введите фамилию:");
-			profile.LastName = Console.ReadLine();
+			AppInfo.CurrentProfile.LastName = Console.ReadLine();
 
 			GetUserAge();
 
 			int currentYear = DateTime.Now.Year;
-			int age = currentYear - profile.BirthYear;
+			int age = currentYear - AppInfo.CurrentProfile.BirthYear;
 
-			FileManager.SaveProfile(profile, FileManager.ProfileInfoPath);
+			FileManager.SaveProfile(FileManager.ProfileInfoPath);
 
-			Console.WriteLine($"Добавлен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
+			Console.WriteLine($"Добавлен пользователь {AppInfo.CurrentProfile.FirstName} {AppInfo.CurrentProfile.LastName}, возраст - {age}");
 		}
 		else
 		{
 			int currentYear = DateTime.Now.Year;
-			int age = currentYear - profile.BirthYear;
-			Console.WriteLine($"Загружен пользователь {profile.FirstName} {profile.LastName}, возраст - {age}");
+			int age = currentYear - AppInfo.CurrentProfile.BirthYear;
+			Console.WriteLine($"Загружен пользователь {AppInfo.CurrentProfile.FirstName} {AppInfo.CurrentProfile.LastName}, возраст - {age}");
 		}
 	}
 
 	private static void InitializeTasks()
 	{
-		todoList = FileManager.LoadTodos(FileManager.TodolistPath);
-		if (todoList == null)
-			todoList = new TodoList();
+		AppInfo.Todos = FileManager.LoadTodos(FileManager.TodolistPath);
+		if (AppInfo.Todos == null)
+			AppInfo.Todos = new TodoList();
 	}
 
 }

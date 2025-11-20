@@ -2,18 +2,13 @@
 namespace TodoList;
 internal abstract class IndexedCommand : ICommand
 {
-	public TodoList TodoList { get; private set; }
 	public int Index { get; private set; }
 
-	public IndexedCommand(TodoList todoList, int index)
-	{
-		TodoList = todoList;
-		Index = index;
-	}
+	public IndexedCommand(int index) => Index = index;
 
 	public void Execute()
 	{
-		var item = TodoList.GetItem(Index);
+		var item = AppInfo.Todos.GetItem(Index);
 		if (item != null)
 			SubExecute(item);
 	}
