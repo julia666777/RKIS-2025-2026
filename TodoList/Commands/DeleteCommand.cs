@@ -9,6 +9,7 @@ namespace TodoList
 		public DeleteCommand(int index) : base(index)
 		{
 			_deletedItem = null;
+			AppInfo.UndoPush(this);
 		}
 
 		protected override void SubExecute(TodoItem item)
@@ -19,13 +20,11 @@ namespace TodoList
 		}
 
 		// Not need
-		protected override void SubUnExecute(TodoItem item) { }
-
-		public new void Unexecute()
+		protected override void SubUnExecute()
 		{
 			AppInfo.Todos.Add(_deletedItem);
+			Console.WriteLine("Удаление задачи отменено");
 		}
 
-		public bool PossibleToUndo() => true;
 	}
 }

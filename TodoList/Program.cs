@@ -15,8 +15,6 @@ public class Program
             var commandLine = Console.ReadLine();
 			var command = CommandParser.Parse(commandLine);
 			command.Execute();
-			if (command.PossibleToUndo())
-				AppInfo.UndoPush(command);
 			FileManager.SaveData(FileManager.ProfileInfoPath, FileManager.TodolistPath);
 		}
     }

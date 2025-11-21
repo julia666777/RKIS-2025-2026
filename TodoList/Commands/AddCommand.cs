@@ -11,6 +11,7 @@ internal class AddCommand : ICommand
 	{
 		_multiline = multiline;
 		Task = task;
+		AppInfo.UndoPush(this);
 	}
 
 	public void Execute()
@@ -40,7 +41,7 @@ internal class AddCommand : ICommand
 	public void Unexecute()
 	{
 		AppInfo.Todos.Delete(AppInfo.Todos.Length - 1);
+		Console.WriteLine($"Добавление задачи отменено.");
 	}
 
-	public bool PossibleToUndo() => true;
 }
