@@ -3,6 +3,7 @@ namespace TodoList;
 internal abstract class IndexedCommand : ICommand
 {
 	public int Index { get; private set; }
+	public TodoItem TargetItem { get; private set; }
 
 	public IndexedCommand(int index) => Index = index;
 
@@ -10,9 +11,19 @@ internal abstract class IndexedCommand : ICommand
 	{
 		var item = AppInfo.Todos.GetItem(Index);
 		if (item != null)
+		{
+			TargetItem = item;
 			SubExecute(item);
+		}
 	}
 
 	// Don't check for NULL, this item is guaranteed not to be NULL
 	protected abstract void SubExecute(TodoItem item);
+	protected abstract void SubUnExecute(TodoItem item);
+
+	public void Unexecute()
+	{
+		if (TargetItem != null) 
+			SubUnExecute(TargetItem);
+	}
 }

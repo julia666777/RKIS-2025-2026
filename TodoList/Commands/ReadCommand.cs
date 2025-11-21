@@ -9,4 +9,7 @@ internal class ReadCommand : IndexedCommand
 	{
 		Console.WriteLine(item.GetFullInfo());
 	}
+
+	protected override void SubUnExecute(TodoItem item) {}
+
 }

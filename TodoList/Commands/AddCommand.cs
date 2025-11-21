@@ -36,4 +36,9 @@ internal class AddCommand : ICommand
 
 		Console.WriteLine($"Добавлена новая задача {item.GetShortText()}");
 	}
+
+	public void Unexecute()
+	{
+		AppInfo.Todos.Delete(AppInfo.Todos.Length - 1);
+	}
 }

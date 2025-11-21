@@ -7,4 +7,5 @@ internal class NoneCommand : ICommand
 	{
 		Console.WriteLine("Неизвестная комманда.");
 	}
+	public void Unexecute() { }
 }

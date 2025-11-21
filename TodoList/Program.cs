@@ -1,6 +1,6 @@
 ﻿
 namespace TodoList;
-public class Program 
+public class Program
 {
 
 	public static void Main(string[] args)
@@ -29,7 +29,7 @@ public class Program
 		if (isBirthYearValid)
 		{
 			AppInfo.CurrentProfile.BirthYear = birthYear;
-			return; 
+			return;
 		}
 		else
 		{

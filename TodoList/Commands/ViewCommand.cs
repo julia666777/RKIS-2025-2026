@@ -20,4 +20,6 @@ internal class ViewCommand : ICommand
 		AppInfo.Todos.View(_showIndexes, _showStatuses, _showDates);
 		Console.WriteLine("===========================================================");
 	}
+
+	public void Unexecute() { }
 }

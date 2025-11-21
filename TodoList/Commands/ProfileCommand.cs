@@ -6,6 +6,7 @@ internal class ProfileCommand : ICommand
 		{
 			Console.WriteLine($"Пользователь {AppInfo.CurrentProfile.GetInfo()}");
 		}
+	public void Unexecute() { }
 }
 
 

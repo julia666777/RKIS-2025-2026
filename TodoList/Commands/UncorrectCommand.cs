@@ -6,4 +6,5 @@ internal class UncorrectCommand : ICommand
 	{
 		Console.WriteLine("Не правильно введена комманда.");
 	}
+	public void Unexecute() { }
 }
