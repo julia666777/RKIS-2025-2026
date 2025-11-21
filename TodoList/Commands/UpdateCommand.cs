@@ -24,4 +24,6 @@ internal class UpdateCommand : IndexedCommand
 		Console.WriteLine($"Задача под номером {Index} восстановлена на \"{_prevTask}\".");
 	}
 
+	public bool PossibleToUndo() => true;
+
 }

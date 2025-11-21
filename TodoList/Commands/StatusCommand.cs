@@ -21,5 +21,12 @@ internal class StatusCommand : ICommand
 		AppInfo.Todos.SetStatus(_index, _status);
         Console.WriteLine($"Статус задачи {_index} изменен на {_status}.");
     }
-	public void Unexecute() { }
+
+	public void Unexecute()
+	{
+
+	}
+
+	public bool PossibleToUndo() => true;
+
 }

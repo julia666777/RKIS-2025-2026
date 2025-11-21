@@ -16,6 +16,8 @@ internal class CommandParser
 	private const string CommandUpdateName = "update";
 	private const string CommandReadName = "read";
 	private const string CommandStatusName = "status";
+	private const string CommandUndoName = "undo";
+	private const string CommandRedoName = "redo";
 
 	private static string[] CommandAddMultilineFlags = new string[]
 	{
@@ -45,6 +47,8 @@ internal class CommandParser
 	public static ICommand Parse(string inputString)
 	{
 		if (CompareCommand(inputString, CommandExitName)) return new ExitCommand();
+		if (CompareCommand(inputString, CommandUndoName)) return new UndoCommand();
+		if (CompareCommand(inputString, CommandRedoName)) return new RedoCommand();
 		else if (CompareCommand(inputString, CommandHelpName)) return new HelpCommand();
 		else if (CompareCommand(inputString, CommandAddName)) return GetAddCommand(inputString);
 		else if (CompareCommand(inputString, CommandStatusName)) return GetStatusCommand(inputString);

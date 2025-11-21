@@ -25,5 +25,7 @@ namespace TodoList
 		{
 			AppInfo.Todos.Add(_deletedItem);
 		}
+
+		public bool PossibleToUndo() => true;
 	}
 }

@@ -41,4 +41,6 @@ internal class AddCommand : ICommand
 	{
 		AppInfo.Todos.Delete(AppInfo.Todos.Length - 1);
 	}
+
+	public bool PossibleToUndo() => true;
 }
