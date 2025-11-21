@@ -28,7 +28,7 @@ public class Program
 
 		if (isBirthYearValid)
 		{
-			AppInfo.CurrentProfile.BirthYear = birthYear;	
+			AppInfo.CurrentProfile.BirthYear = birthYear;
 			return; 
 		}
 		else

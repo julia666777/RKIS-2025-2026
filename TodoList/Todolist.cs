@@ -43,20 +43,21 @@ internal class TodoList
 	private string GenerateTableHeader(bool showIndex, bool showDone, bool showDate)
 	{
 		string header = "";
-		if (showIndex) header += "Index ";
-		if (showDone) header += "Status ";
-		if (showDate) header += "Date ";
-		header += "Text";
+		if (showIndex) header += "Index";
+		if (showDone) header += "\tStatus ";
+		if (showDate) header += "\t\tDate ";
+		header += "\t\tText";
 		return header;
 	}
 
 	private string GenerateTableRow(TodoItem item, int index, bool showIndex, bool showDone, bool showDate)
 	{
 		string row = "";
-		if (showIndex) row += $"{index} ";
-		if (showDone) row += $"{item.Status} ";
+		if (showIndex) row += $"{index}\t";
+		if (showDone) row += $"{item.Status}\t";
 		if (showDate) row += $"{item.LastUpdate.ToShortDateString()} ";
-		row += $"\"{item.GetShortText()}\" ";
+		row += $"\t\"{item.ToPrintText()}\" ";
+		row += "\n";
 		return row;
 	}
 

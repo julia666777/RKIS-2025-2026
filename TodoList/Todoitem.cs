@@ -32,6 +32,18 @@ internal class TodoItem
 		return Text.Length > 30 ? Text.Substring(0, 30) + "..." : Text;
 	}
 
+	public string ToPrintText()
+	{
+		var args = GetShortText().Split('\n');
+		string output = args[0] + "\n";
+		for (int i = 1;i < args.Length;i++)
+		{
+			output += "\t\t\t\t\t" + args[i] + "\n";
+		}
+		output = output.Substring(0, output.Length - 1);
+		return output;
+	}
+
 	public string GetShortInfo()
 	{
 		string truncatedText = GetShortText();
