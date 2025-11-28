@@ -1,23 +1,32 @@
 ﻿
+using TodoList.Commands;
+
 namespace TodoList;
 public class Program
 {
 
 	public static void Main(string[] args)
-    {
+	{
 		Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
 
 		InitializeUserData();
 		InitializeTasks();
 
 		while (true)
-        {
-            var commandLine = Console.ReadLine();
+		{
+			var commandLine = Console.ReadLine();
 			var command = CommandParser.Parse(commandLine);
 			command.Execute();
+			if (!(command is ViewCommand || command is HelpCommand || command is ExitCommand ||
+				  command is ProfileCommand || command is UndoCommand || command is RedoCommand ||
+				  command is NoneCommand || command is UncorrectCommand))
+			{
+				AppInfo.UndoPush(command);
+				AppInfo.RedoStack.Clear();
+			}
 			FileManager.SaveData(FileManager.ProfileInfoPath, FileManager.TodolistPath);
 		}
-    }
+	}
 
 	private static void GetUserAge()
 	{

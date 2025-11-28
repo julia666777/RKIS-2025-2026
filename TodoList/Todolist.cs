@@ -74,4 +74,12 @@ internal class TodoList
 			Console.WriteLine($"Ошибка: Некорректный индекс для установки статуса: {index}");
 		}
 	}
+	public void Insert(int index, TodoItem item)
+	{
+		if (index < 0 || index > _items.Count) //вставка в конец списка 
+		{
+			throw new ArgumentOutOfRangeException(nameof(index), "Индекс вышел за пределы диапазона для вставки.");
+		}
+		_items.Insert(index, item);
+	}
 }
