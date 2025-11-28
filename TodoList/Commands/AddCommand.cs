@@ -28,11 +28,11 @@ internal class AddCommand : ICommand
 			}
 
 			item.Text = Task;
-			AppInfo.Todos.Add(item);
+			AppInfo.CurrentTodoList.Add(item);
 		}
 		else
 		{
-			AppInfo.Todos.Add(item);
+			AppInfo.CurrentTodoList.Add(item);
 		}
 
 		Console.WriteLine($"Добавлена новая задача {item.GetShortText()}");
@@ -40,7 +40,7 @@ internal class AddCommand : ICommand
 
 	public void Unexecute()
 	{
-		AppInfo.Todos.Delete(AppInfo.Todos.Length - 1);
+		AppInfo.CurrentTodoList.Delete(AppInfo.CurrentTodoList.Length - 1);
 		Console.WriteLine($"Добавление задачи отменено.");
 	}
 

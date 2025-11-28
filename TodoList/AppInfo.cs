@@ -3,7 +3,8 @@
 namespace TodoList;
 internal class AppInfo
 {
-	public static TodoList Todos { get; set; }
+	public static TodoList CurrentTodoList => Todos[CurrentProfileID];
+	public static List<TodoList> Todos { get; set; }
 	public static Profile CurrentProfile => Profiles[CurrentProfileID];
 
 	public static Stack<ICommand> UndoStack = new Stack<ICommand>();
@@ -15,12 +16,20 @@ internal class AppInfo
 	public static void UndoPop() => UndoStack.Pop();
 	public static void RedoPush(ICommand command) => RedoStack.Push(command);
 	public static void RedoPop() => RedoStack.Pop();
+	public static void ClearCommandsHistory()
+	{
+		UndoStack.Clear();
+		RedoStack.Clear();
+	}
+
 	public static void InsertNewProfile(Profile profile)
 	{
 		Profiles.Add(profile);
 		CurrentProfileID = Profiles.Count - 1;
+		Todos.Add(new TodoList());
 		Console.WriteLine($"Добавлен новый пользователь {profile}.");
 	}
+
 	public static bool IsHaveLogin(string login, out int index)
 	{
 		index = -1;

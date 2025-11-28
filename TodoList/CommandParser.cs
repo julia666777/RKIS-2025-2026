@@ -41,6 +41,10 @@ internal class CommandParser
 	{
 		"--all", "-a"
 	};
+	private static string[] CommandProfileOutFlags = new string[]
+	{
+		"--out", "-o"
+	};
 	//==========================================================================
 
 
@@ -52,7 +56,7 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandHelpName)) return new HelpCommand();
 		else if (CompareCommand(inputString, CommandAddName)) return GetAddCommand(inputString);
 		else if (CompareCommand(inputString, CommandStatusName)) return GetStatusCommand(inputString);
-		else if (CompareCommand(inputString, CommandProfileName)) return new ProfileCommand();
+		else if (CompareCommand(inputString, CommandProfileName)) return GetProfileCommand(inputString);
 		else if (CompareCommand(inputString, CommandViewName)) return GetViewCommand(inputString);
 		else if (CompareCommand(inputString, CommandDeleteName)) return GetDeleteCommand(inputString);
 		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString);
@@ -154,7 +158,7 @@ internal class CommandParser
 		bool indexValid = int.TryParse(items[1], out int index);
 		Debug.Assert(indexValid);
 
-		if (checkForNumOfTasks && (index < 0 || index >= AppInfo.Todos.Length))
+		if (checkForNumOfTasks && (index < 0 || index >= AppInfo.CurrentTodoList.Length))
 		{
 			throw new Exception($"ReadIndexFromCommand: Uncorrected index {index}!");
 		}
@@ -176,13 +180,13 @@ internal class CommandParser
 			return GetUncorrect();
 		}
 
-		if (index < 0 && index > AppInfo.Todos.Length)
+		if (index < 0 && index > AppInfo.CurrentTodoList.Length)
 		{
 			Console.WriteLine($"{CommandUpdateName}: задачи под номером {index} не существует.");
 			return GetUncorrect();
 		}
 
-		if (args.Length > 2 && AppInfo.Todos.IsValidIndex(index))
+		if (args.Length > 2 && AppInfo.CurrentTodoList.IsValidIndex(index))
 		{
 			return new UpdateCommand(index, args[2]);
 		}
@@ -211,4 +215,6 @@ internal class CommandParser
 		}
 		return new StatusCommand(index, newStatus);
 	}
+
+	private static ICommand GetProfileCommand(string inputString) => new ProfileCommand(LineFlagsFounded(inputString, CommandProfileOutFlags));
 }

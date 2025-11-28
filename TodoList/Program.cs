@@ -14,7 +14,6 @@ public class Program
 
 		// initialize users and tasks data
 		InitializeUserData();
-		InitializeTasks();
 
 		// main loop
 		while (true)
@@ -29,7 +28,8 @@ public class Program
 				AppInfo.UndoPush(command);
 				AppInfo.RedoStack.Clear();
 			}
-			FileManager.SaveData(FileManager.ProfileInfoPath, FileManager.TodolistPath);
+			FileManager.SaveCurrentTodoList();
+			//FileManager.SaveData(FileManager.ProfileInfoPath, FileManager.TodolistPath);
 		}
 	}
 
@@ -62,12 +62,13 @@ public class Program
 			EnterLoginPassword(index);
 	}
 
-	private static void EnterExistProfile()
+	public static void EnterExistProfile()
 	{
 		Console.WriteLine("Введите логин:");
 		var login = Console.ReadLine();
 		if (AppInfo.IsHaveLogin(login, out int index))
 		{
+			AppInfo.ClearCommandsHistory();
 			EnterLoginPassword(index);
 			Console.WriteLine($"С возвращением {AppInfo.CurrentProfile.FirstName} больше известный как {AppInfo.CurrentProfile.Login}!");
 		}
@@ -85,11 +86,13 @@ public class Program
 			CreateNewProfile();
 	}
 
-	private static void CreateNewProfile()
+	public static void CreateNewProfile()
 	{
 		// setup profile
 		Console.WriteLine("****\tСоздание нового профиля\t****");
+		AppInfo.ClearCommandsHistory();
 
+		// filling
 		Profile profile = new Profile();
 
 		Console.WriteLine("Введите имя:");
@@ -116,9 +119,12 @@ public class Program
     // Получение данных пользователя и их обработка 
     private static void InitializeUserData()
     {
+		AppInfo.Todos = new List<TodoList>();
+
 		if (FileManager.IsThereProfilesFile() && FileManager.LoadProfiles(FileManager.ProfileInfoPath, out var profiles))
 		{
 			AppInfo.Profiles = profiles;
+			FileManager.PrecacheTodoLists();
 			EnterProfile();
 		}
 		else
@@ -127,13 +133,6 @@ public class Program
 			AppInfo.Profiles = new List<Profile>();
 			CreateNewProfile();
 		}
-	}
-
-	private static void InitializeTasks()
-	{
-		AppInfo.Todos = FileManager.LoadTodos(FileManager.TodolistPath);
-		if (AppInfo.Todos == null)
-			AppInfo.Todos = new TodoList();
 	}
 
 }

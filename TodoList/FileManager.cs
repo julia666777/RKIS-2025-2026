@@ -96,19 +96,6 @@ internal class FileManager
 		return output;
 	}
 
-	public static void SaveTodos(string filePath)
-	{
-		string lines = "";
-
-		for (int i = 0; i < AppInfo.Todos.Length; i++)
-		{
-			var item = AppInfo.Todos.GetItem(i);
-			lines += $"{item.Status.ToString()};{item.LastUpdate};{TextStringConvert(item.Text)}\n";
-		}
-
-		File.WriteAllText(TodolistPath, lines);
-	}
-
 	private static string ParseFileText(string text)
 	{
 		if (text.Contains(_multilineToken))
@@ -156,20 +143,44 @@ internal class FileManager
 		return list;
 	}
 
-	public static void SaveData(string profilePath, string todoPath)
-	{
-		//SaveProfile(profilePath);
-		//SaveTodos(todoPath);
-	}
-
 	public static void SaveProfiles(string pathToSaves)
 	{
 		List<string> text = new List<string>();
+
 		foreach (var i in AppInfo.Profiles)
 		{
 			string s = $"{i.Id};{i.Login};{i.Password};{i.FirstName};{i.LastName};{i.BirthYear}";
 			text.Add(s);
 		}
+
 		File.WriteAllLines(pathToSaves, text);
 	}
+
+	public static void SaveCurrentTodoList()
+	{
+		List<string> text = new List<string>();
+
+		string path = Path.Combine(DataDirPath, $"todos_{AppInfo.CurrentProfileID}.cso");
+
+		for (int i = 0; i < AppInfo.CurrentTodoList.Length; i++)
+		{
+			var item = AppInfo.CurrentTodoList.GetItem(i);
+			text.Add($"{item.Status};{item.LastUpdate};{TextStringConvert(item.Text)}");
+		}
+
+		File.WriteAllLines(path, text);
+	}
+
+	public static void PrecacheTodoLists()
+	{
+		for (int i = 0; i < AppInfo.Profiles.Count; i++)
+		{
+			var todoList = LoadTodos(Path.Combine(DataDirPath, $"todos_{i}.cso"));
+			if (todoList == null)
+				AppInfo.Todos.Add(new TodoList());
+			else
+				AppInfo.Todos.Add(todoList);
+		}
+	}
+
 }

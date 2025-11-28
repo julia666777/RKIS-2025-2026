@@ -9,7 +9,7 @@ internal abstract class IndexedCommand : ICommand
 
 	public void Execute()
 	{
-		var item = AppInfo.Todos.GetItem(Index);
+		var item = AppInfo.CurrentTodoList.GetItem(Index);
 		if (item != null)
 		{
 			TargetItem = item;

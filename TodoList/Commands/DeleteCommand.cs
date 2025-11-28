@@ -15,14 +15,14 @@ namespace TodoList
 		protected override void SubExecute(TodoItem item)
 		{
 			_deletedItem = item;
-			AppInfo.Todos.Delete(Index);
+			AppInfo.CurrentTodoList.Delete(Index);
 			Console.WriteLine("Задача успешно удалена");
 		}
 
 		// Not need
 		protected override void SubUnExecute()
 		{
-			AppInfo.Todos.Add(_deletedItem);
+			AppInfo.CurrentTodoList.Add(_deletedItem);
 			Console.WriteLine("Удаление задачи отменено");
 		}
 

@@ -17,7 +17,7 @@ internal class ViewCommand : ICommand
 	{
 		Console.WriteLine("===========================================================");
 		Console.WriteLine("\tИнформация о задачах\t");
-		AppInfo.Todos.View(_showIndexes, _showStatuses, _showDates);
+		AppInfo.CurrentTodoList.View(_showIndexes, _showStatuses, _showDates);
 		Console.WriteLine("===========================================================");
 	}
 

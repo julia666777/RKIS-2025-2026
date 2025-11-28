@@ -14,24 +14,24 @@ internal class StatusCommand : ICommand
 
     public void Execute()
     {
-        if (!AppInfo.Todos.IsValidIndex(_index))
+        if (!AppInfo.CurrentTodoList.IsValidIndex(_index))
         {
             Console.WriteLine($"Ошибка: Задачи с индексом {_index} не существует.");
             return;
         }
-		_prevStatus = AppInfo.Todos.GetItem(_index).Status;
-		AppInfo.Todos.SetStatus(_index, _status);
+		_prevStatus = AppInfo.CurrentTodoList.GetItem(_index).Status;
+		AppInfo.CurrentTodoList.SetStatus(_index, _status);
         Console.WriteLine($"Статус задачи {_index} изменен на {_status}.");
     }
 
 	public void Unexecute()
 	{
-		if (!AppInfo.Todos.IsValidIndex(_index))
+		if (!AppInfo.CurrentTodoList.IsValidIndex(_index))
 		{
 			Console.WriteLine($"Ошибка: Задачи с индексом {_index} не существует.");
 			return;
 		}
-		AppInfo.Todos.SetStatus(_index, _prevStatus);
+		AppInfo.CurrentTodoList.SetStatus(_index, _prevStatus);
 		Console.WriteLine("Изменение статуса отменено.");
 	}
 
