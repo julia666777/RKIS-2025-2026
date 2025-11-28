@@ -4,7 +4,7 @@ internal class FileManager
 {
 	public static string DataDirPath => "data";
 
-	public static string ProfileInfoName => "profile.txt";
+	public static string ProfileInfoName => "profile.cso";
 	public static string ProfileInfoPath => Path.Combine(DataDirPath, ProfileInfoName);
 
 	public static string TodoListFilePath => "todo.csv";
@@ -19,9 +19,14 @@ internal class FileManager
 		}
 	}
 
+	public static string ProfileToFormat()
+	{
+		return AppInfo.CurrentProfile.FirstName + "\n" + AppInfo.CurrentProfile.LastName + "\n" + AppInfo.CurrentProfile.BirthYear;
+	}
+
 	public static void SaveProfile(string filePath)
 	{
-		string textOfProfile = AppInfo.CurrentProfile.ConvertToFileFormat();
+		string textOfProfile = ProfileToFormat();
 		EnsureDataDirectory(Path.GetDirectoryName(filePath).ToString());
 		File.WriteAllText(filePath, textOfProfile);
 	}
@@ -46,6 +51,34 @@ internal class FileManager
 
 		return profile;
 	}
+
+	public static bool LoadProfiles(string filePath, out List<Profile> profile)
+	{
+		profile = new List<Profile>();
+
+		if (!File.Exists(filePath))
+			return false;
+
+		string[] lines = File.ReadAllLines(filePath);
+		foreach (var i in lines)
+		{
+			var args = i.Split(';');
+			Profile p = new Profile();
+			Guid.TryParse(args[0], out var id);
+			p.Id = id;
+			p.Login = args[1];
+			p.Password = args[2];
+			p.FirstName = args[3];
+			p.LastName = args[4];
+			int.TryParse(args[5], out int year);
+			p.BirthYear = year;
+			profile.Add(p);
+		}
+
+		return true;
+	}
+
+	public static bool IsThereProfilesFile() => File.Exists(ProfileInfoPath);
 
 	private static string TextStringConvert(string text)
 	{
@@ -125,7 +158,18 @@ internal class FileManager
 
 	public static void SaveData(string profilePath, string todoPath)
 	{
-		SaveProfile(profilePath);
-		SaveTodos(todoPath);
+		//SaveProfile(profilePath);
+		//SaveTodos(todoPath);
+	}
+
+	public static void SaveProfiles(string pathToSaves)
+	{
+		List<string> text = new List<string>();
+		foreach (var i in AppInfo.Profiles)
+		{
+			string s = $"{i.Id};{i.Login};{i.Password};{i.FirstName};{i.LastName};{i.BirthYear}";
+			text.Add(s);
+		}
+		File.WriteAllLines(pathToSaves, text);
 	}
 }

@@ -9,9 +9,14 @@ public class Program
 	{
 		Console.WriteLine("Работу выполнили Чернова Юлия и Соловьев Иван 3833");
 
+		// checking if data directory exist, and create if not
+		FileManager.EnsureDataDirectory(FileManager.DataDirPath);
+
+		// initialize users and tasks data
 		InitializeUserData();
 		InitializeTasks();
 
+		// main loop
 		while (true)
 		{
 			var commandLine = Console.ReadLine();
@@ -28,7 +33,7 @@ public class Program
 		}
 	}
 
-	private static void GetUserAge()
+	private static void GetUserAge(Profile profile)
 	{
 		Console.WriteLine("Введите год рождения:");
 		string birthYearString = Console.ReadLine();
@@ -37,45 +42,90 @@ public class Program
 
 		if (isBirthYearValid)
 		{
-			AppInfo.CurrentProfile.BirthYear = birthYear;
+			profile.BirthYear = birthYear;
 			return;
 		}
 		else
 		{
 			Console.WriteLine("Ошибка: Некорректный год рождения, пожалуйста, введите целое число.");
-			GetUserAge();
+			GetUserAge(profile);
 		}
+	}
+
+	private static void EnterLoginPassword(int index)
+	{
+		Console.WriteLine("Введите пароль:");
+		var password = Console.ReadLine();
+		if (AppInfo.Profiles[index].Password == password)
+			AppInfo.CurrentProfileID = index;
+		else
+			EnterLoginPassword(index);
+	}
+
+	private static void EnterExistProfile()
+	{
+		Console.WriteLine("Введите логин:");
+		var login = Console.ReadLine();
+		if (AppInfo.IsHaveLogin(login, out int index))
+		{
+			EnterLoginPassword(index);
+			Console.WriteLine($"С возвращением {AppInfo.CurrentProfile.FirstName} больше известный как {AppInfo.CurrentProfile.Login}!");
+		}
+		else
+			EnterExistProfile();
+	}
+
+	private static void EnterProfile()
+	{
+		Console.WriteLine("Войти в существующий профиль? [y/n]");
+		var answer = Console.ReadLine();
+		if (answer == "y" || answer == "Y")
+			EnterExistProfile();
+		else
+			CreateNewProfile();
+	}
+
+	private static void CreateNewProfile()
+	{
+		// setup profile
+		Console.WriteLine("****\tСоздание нового профиля\t****");
+
+		Profile profile = new Profile();
+
+		Console.WriteLine("Введите имя:");
+		profile.FirstName = Console.ReadLine();
+
+		Console.WriteLine("Введите фамилию:");
+		profile.LastName = Console.ReadLine();
+
+		GetUserAge(profile);
+
+		Console.WriteLine("Придумайте логин:");
+		profile.Login = Console.ReadLine();
+
+		Console.WriteLine("Придумайте пароль:");
+		profile.Password = Console.ReadLine();
+
+		profile.Id = Guid.NewGuid();
+
+		// complete
+		AppInfo.InsertNewProfile(profile);
+		FileManager.SaveProfiles(FileManager.ProfileInfoPath);
 	}
 
     // Получение данных пользователя и их обработка 
     private static void InitializeUserData()
     {
-		AppInfo.CurrentProfile = FileManager.LoadProfile(FileManager.ProfileInfoPath);
-
-		if (AppInfo.CurrentProfile == null)
+		if (FileManager.IsThereProfilesFile() && FileManager.LoadProfiles(FileManager.ProfileInfoPath, out var profiles))
 		{
-			AppInfo.CurrentProfile = new Profile();
-
-			Console.WriteLine("Введите имя:");
-			AppInfo.CurrentProfile.FirstName = Console.ReadLine();
-
-			Console.WriteLine("Введите фамилию:");
-			AppInfo.CurrentProfile.LastName = Console.ReadLine();
-
-			GetUserAge();
-
-			int currentYear = DateTime.Now.Year;
-			int age = currentYear - AppInfo.CurrentProfile.BirthYear;
-
-			FileManager.SaveProfile(FileManager.ProfileInfoPath);
-
-			Console.WriteLine($"Добавлен пользователь {AppInfo.CurrentProfile.FirstName} {AppInfo.CurrentProfile.LastName}, возраст - {age}");
+			AppInfo.Profiles = profiles;
+			EnterProfile();
 		}
 		else
 		{
-			int currentYear = DateTime.Now.Year;
-			int age = currentYear - AppInfo.CurrentProfile.BirthYear;
-			Console.WriteLine($"Загружен пользователь {AppInfo.CurrentProfile.FirstName} {AppInfo.CurrentProfile.LastName}, возраст - {age}");
+			// create new
+			AppInfo.Profiles = new List<Profile>();
+			CreateNewProfile();
 		}
 	}
 
