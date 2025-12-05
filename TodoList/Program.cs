@@ -21,11 +21,9 @@ public class Program
 			var commandLine = Console.ReadLine();
 			var command = CommandParser.Parse(commandLine);
 			command.Execute();
-			if (!(command is ViewCommand || command is HelpCommand || command is ExitCommand ||
-				  command is ProfileCommand || command is UndoCommand || command is RedoCommand ||
-				  command is NoneCommand || command is UncorrectCommand))
+			if ((command is DeleteCommand || command is IndexedCommand || command is ReadCommand ||
+				  command is StatusCommand || command is UpdateCommand))
 			{
-				AppInfo.UndoPush(command);
 				AppInfo.RedoStack.Clear();
 			}
 			FileManager.SaveCurrentTodoList();
