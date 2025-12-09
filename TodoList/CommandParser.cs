@@ -47,8 +47,88 @@ internal class CommandParser
 	};
 	//==========================================================================
 
+	private static Dictionary<string, Func<string, ICommand>> _commandHandlers = new Dictionary<string, Func<string, ICommand>>();
+	static CommandParser()
+	{
+		_commandHandlers["add"] = ParseAdd;
+		_commandHandlers["delete"] = ParseDelete;
+		_commandHandlers["help"] = ParseHelp;
+		_commandHandlers["exit"] = ParseExit;
+		_commandHandlers["profile"] = ParseProfile;
+		_commandHandlers["undo"] = ParseUndo;
+		_commandHandlers["redo"] = ParseRedo;
+		_commandHandlers["none"] = ParseNone;
+		_commandHandlers["uncorrect"] = ParseIncorrect;
+		_commandHandlers["index"] = ParseIndex;
+		_commandHandlers["read"] = ParseRead;
+		_commandHandlers["status"] = ParseStatus;
+		_commandHandlers["update"] = ParseUpdate;
+		_commandHandlers["view"] = ParseView;
+	}
 
 	public static ICommand Parse(string inputString)
+	{
+		if (string.IsNullOrWhiteSpace(inputString))
+			return new NoneCommand();
+
+		var parts = inputString.Trim().Split(' ', 2);
+		string commandName = parts[0].ToLower();
+		string arguments = parts.Length > 1 ? parts[1] : "";
+		// Ищем обработчик в словаре
+		if (_commandHandlers.TryGetValue(commandName, out var handler))
+		{
+			return handler(arguments);
+		}
+		// Если команда не найдена - парс как команду с индексом
+		return ParseUnknownCommand(inputString);
+	}
+	private static ICommand ParseAdd(string arguments)
+	{
+		bool multiline = false;
+		var userEnteredTask = arguments.Split(' ', 2);
+
+		foreach (var i in CommandAddMultilineFlags)
+		{
+			if (arguments.Contains(i))
+			{
+				multiline = true;
+				break;
+			}
+		}
+		if (!multiline)
+		{
+			if (userEnteredTask.Length > 0 && IsTaskValidToAdd(userEnteredTask[0]))
+			{
+				return new AddCommand(multiline, userEnteredTask[0]);
+			}
+			else return GetUncorrect();
+		}
+		else
+		{
+			return new AddCommand(multiline, "");
+		}
+	}
+	private static ICommand ParseDelete(string arguments)
+	{
+		if (int.TryParse(arguments.Trim(), out int index))
+			return new DeleteCommand(index);
+		return GetUncorrect();
+	}
+
+	private static ICommand ParseHelp(string arguments) => new HelpCommand();
+	private static ICommand ParseExit(string arguments) => new ExitCommand();
+	private static ICommand ParseProfile(string arguments) => new ProfileCommand(LineFlagsFounded("profile " + arguments, CommandProfileOutFlags));
+	private static ICommand ParseUndo(string arguments) => new UndoCommand();
+	private static ICommand ParseRedo(string arguments) => new RedoCommand();
+	private static ICommand ParseNone(string arguments) => new NoneCommand();
+	private static ICommand ParseIncorrect(string arguments) => new UncorrectCommand();
+	private static ICommand ParseIndex(string arguments) => GetUncorrect(); // Заглушка
+	private static ICommand ParseRead(string arguments) => new ReadCommand(ReadIndexFromCommand("read", "read " + arguments, false));
+	private static ICommand ParseStatus(string arguments) => GetStatusCommand("status " + arguments);
+	private static ICommand ParseUpdate(string arguments) => GetUpdateCommand("update " + arguments);
+	private static ICommand ParseView(string arguments) => GetViewCommand("view " + arguments);
+
+	private static ICommand ParseUnknownCommand(string inputString)
 	{
 		if (CompareCommand(inputString, CommandExitName)) return new ExitCommand();
 		if (CompareCommand(inputString, CommandUndoName)) return new UndoCommand();
@@ -61,7 +141,6 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandDeleteName)) return GetDeleteCommand(inputString);
 		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString);
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString);
-
 		return new NoneCommand();
 	}
 
