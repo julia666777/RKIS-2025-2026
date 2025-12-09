@@ -14,6 +14,8 @@ namespace TodoList
 				read - просмотреть полный текст задачи
 				delete - удалить задачу
 				update - обновить задачу
+				undo - отмена действия
+				redo - повтор действия
 				status - <idx> изменить статус задачи {TodoStatus.Completed}, {TodoStatus.Failed}, {TodoStatus.NotStarted}, {TodoStatus.InProgress}
 				exit - выход
 				"""); 
