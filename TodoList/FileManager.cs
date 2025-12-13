@@ -4,7 +4,7 @@ internal class FileManager
 {
 	public static string DataDirPath => "data";
 
-	public static string ProfileInfoName => "profile.cso";
+	public static string ProfileInfoName => "profile.csv";
 	public static string ProfileInfoPath => Path.Combine(DataDirPath, ProfileInfoName);
 
 	public static string TodoListFilePath => "todo.csv";
@@ -160,7 +160,7 @@ internal class FileManager
 	{
 		List<string> text = new List<string>();
 
-		string path = Path.Combine(DataDirPath, $"todos_{AppInfo.CurrentProfileID}.cso");
+		string path = Path.Combine(DataDirPath, $"todos_{AppInfo.CurrentProfileID}.csv");
 
 		for (int i = 0; i < AppInfo.CurrentTodoList.Length; i++)
 		{
@@ -171,16 +171,35 @@ internal class FileManager
 		File.WriteAllLines(path, text);
 	}
 
+	public static void InitializeTodoListCallacks(TodoList list)
+	{
+		list.OnTodoAdded += SaveTodoList;
+		list.OnTodoDeleted += SaveTodoList;
+		list.OnStatusChanged += SaveTodoList;
+	}
+
 	public static void PrecacheTodoLists()
 	{
 		for (int i = 0; i < AppInfo.Profiles.Count; i++)
 		{
-			var todoList = LoadTodos(Path.Combine(DataDirPath, $"todos_{i}.cso"));
+			var todoList = LoadTodos(Path.Combine(DataDirPath, $"todos_{i}.csv"));
 			if (todoList == null)
+			{
+				var l = new TodoList();
 				AppInfo.Todos.Add(new TodoList());
+				InitializeTodoListCallacks(l);
+			}
 			else
+			{
 				AppInfo.Todos.Add(todoList);
+				InitializeTodoListCallacks(todoList);
+			}
 		}
+	}
+
+	public static void SaveTodoList(TodoItem item)
+	{
+		SaveCurrentTodoList();
 	}
 
 }

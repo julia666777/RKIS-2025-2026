@@ -27,6 +27,7 @@ internal class AppInfo
 		Profiles.Add(profile);
 		CurrentProfileID = Profiles.Count - 1;
 		Todos.Add(new TodoList());
+		FileManager.InitializeTodoListCallacks(Todos[CurrentProfileID]);
 		Console.WriteLine($"Добавлен новый пользователь {profile}.");
 	}
 

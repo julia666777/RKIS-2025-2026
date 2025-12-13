@@ -8,16 +8,23 @@ internal class TodoList
 	public int Length { get => _items.Count; }
 	public int LenghtAllocated { get => _items.Count; }
 
+	// Event Actions
+	public event Action<TodoItem>? OnTodoAdded;
+	public event Action<TodoItem>? OnTodoDeleted;
+	public event Action<TodoItem>? OnStatusChanged;
+
 	//добавление задачи
 	public void Add(TodoItem item)
 	{
 		_items.Add(item);
+		OnTodoAdded?.Invoke(item);
 	}
 
 	//удаление
 	public void Delete(int index)
 	{
 		_items.RemoveAt(index);
+		OnTodoDeleted?.Invoke(_items[index]);
 	}
 
 	public void View(bool showIndex, bool showDone, bool showDate)
@@ -68,12 +75,14 @@ internal class TodoList
 		if (IsValidIndex(index))
 		{
 			_items[index].SetStatus(status);
+			OnStatusChanged?.Invoke(_items[index]);
 		}
 		else
 		{
 			Console.WriteLine($"Ошибка: Некорректный индекс для установки статуса: {index}");
 		}
 	}
+
 	public void Insert(int index, TodoItem item)
 	{
 		if (index < 0 || index > _items.Count) //вставка в конец списка 

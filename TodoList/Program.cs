@@ -26,8 +26,6 @@ public class Program
 			{
 				AppInfo.RedoStack.Clear();
 			}
-			FileManager.SaveCurrentTodoList();
-			//FileManager.SaveData(FileManager.ProfileInfoPath, FileManager.TodolistPath);
 		}
 	}
 
