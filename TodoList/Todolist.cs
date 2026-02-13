@@ -3,6 +3,7 @@ namespace TodoList;
 internal class TodoList
 {
 	private List<TodoItem> _items = new List<TodoItem>();
+	public List<TodoItem> Items { get => _items; }
 
 	// Количество задач в списке
 	public int Length { get => _items.Count; }

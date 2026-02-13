@@ -18,6 +18,7 @@ internal class CommandParser
 	private const string CommandStatusName = "status";
 	private const string CommandUndoName = "undo";
 	private const string CommandRedoName = "redo";
+	private const string CommandSearchName = "search";
 
 	private static string[] CommandAddMultilineFlags = new string[]
 	{
@@ -45,6 +46,13 @@ internal class CommandParser
 	{
 		"--out", "-o"
 	};
+
+	private static string[] CommandSearchFlags = new string[]
+	{
+		"--contains", "--start-with", "--end-with",
+		"--from", "-to",
+		"--status", "--sort text", "--sort date", "--desc", "--top"
+	};
 	//==========================================================================
 
 	private static Dictionary<string, Func<string, ICommand>> _commandHandlers = new Dictionary<string, Func<string, ICommand>>();
@@ -64,6 +72,7 @@ internal class CommandParser
 		_commandHandlers["status"] = ParseStatus;
 		_commandHandlers["update"] = ParseUpdate;
 		_commandHandlers["view"] = ParseView;
+		_commandHandlers["search"] = ParseSearch;
 	}
 
 	public static ICommand Parse(string inputString)
@@ -127,6 +136,7 @@ internal class CommandParser
 	private static ICommand ParseStatus(string arguments) => GetStatusCommand("status " + arguments);
 	private static ICommand ParseUpdate(string arguments) => GetUpdateCommand("update " + arguments);
 	private static ICommand ParseView(string arguments) => GetViewCommand("view " + arguments);
+	private static ICommand ParseSearch(string arguments) => GetSearchCommand("search " + arguments);
 
 	private static ICommand ParseUnknownCommand(string inputString)
 	{
@@ -141,6 +151,7 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandDeleteName)) return GetDeleteCommand(inputString);
 		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString);
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString);
+		else if (CompareCommand(inputString, CommandSearchName)) return GetSearchCommand(inputString);
 		return new NoneCommand();
 	}
 
@@ -296,4 +307,30 @@ internal class CommandParser
 	}
 
 	private static ICommand GetProfileCommand(string inputString) => new ProfileCommand(LineFlagsFounded(inputString, CommandProfileOutFlags));
+
+	private static ICommand GetSearchCommand(string inputString)
+	{
+		SearchCommand searchCommand = new SearchCommand();
+		var args = inputString.Split(' ');
+
+		if (args.Contains(CommandSearchFlags[0]))
+		{
+			int index = Array.IndexOf(args, CommandSearchFlags[0]) + 1;
+			searchCommand.SetupContains(args[index]);
+		}
+
+		if (args.Contains(CommandSearchFlags[1]))
+		{
+			int index = Array.IndexOf(args, CommandSearchFlags[1]) + 1;
+			searchCommand.SetupStartWith(args[index]);
+		}
+
+		if (args.Contains(CommandSearchFlags[2]))
+		{
+			int index = Array.IndexOf(args, CommandSearchFlags[2]) + 1;
+			searchCommand.SetupEndWith(args[index]);
+		}
+
+		return searchCommand;
+	}
 }
