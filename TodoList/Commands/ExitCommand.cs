@@ -6,7 +6,9 @@ namespace TodoList
     {
 		public void Execute()
 		{
-			Environment.Exit(0);	
+			FileManager.SaveCurrentTodoList();
+			FileManager.SaveProfiles(FileManager.ProfileInfoPath);
+			Environment.Exit(0);
 		}
 
 		public void Unexecute() { }

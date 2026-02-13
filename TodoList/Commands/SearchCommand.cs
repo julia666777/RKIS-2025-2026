@@ -47,8 +47,11 @@ internal class SearchCommand : ICommand
 		// TODO: ordering by flags
 		IOrderedEnumerable<TodoItem> selected = from c in AppInfo.CurrentTodoList.Items
 												where
-												c.Text.StartsWith(_startWith) && c.Text.Contains(_conteins) && c.Text.EndsWith(_endWith) &&
-												c.LastUpdate >= _fromDate && c.LastUpdate <= _toDate &&
+												 (_startWith == "" || c.Text.StartsWith(_startWith)) &&
+												  (_conteins == "" || c.Text.Contains(_conteins)) &&
+												  (_endWith == "" || c.Text.EndsWith(_endWith)) &&
+												  c.LastUpdate.Date >= _fromDate.Date &&
+												  c.LastUpdate.Date <= _toDate.Date &&
 												CheckStatus(c)
 												orderby c.Text
 												select c;
@@ -79,6 +82,7 @@ internal class SearchCommand : ICommand
 			int index = 0;
 			foreach (var i in selected)
 			{
+
 				if (_topFlag && index >= _topValue)
 					break;
 

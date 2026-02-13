@@ -7,7 +7,7 @@ internal class ReadCommand : IndexedCommand
 
 	protected override void SubExecute(TodoItem item)
 	{
-		Console.WriteLine(item.GetFullInfo());
+		Console.WriteLine("\n" + item.GetFullInfo());
 	}
 
 	protected override void SubUnExecute() {}

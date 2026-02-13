@@ -22,6 +22,9 @@ internal class AddCommand : ICommand
 		{
 			Task = "";
 
+			int lastIndex = AppInfo.CurrentTodoList.Length - 1;
+			AppInfo.CurrentTodoList.Delete(lastIndex);
+
 			for (var line = Console.ReadLine(); line != CommandAddEndMark; line = Console.ReadLine())
 			{
 				Task += line + "\n";

@@ -10,6 +10,7 @@ internal class StatusCommand : ICommand
         _index = index;
         _status = status;
 		_prevStatus = TodoStatus.NotStarted;
+		AppInfo.UndoPush(this);
 	}
 
     public void Execute()

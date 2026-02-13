@@ -287,7 +287,7 @@ internal class CommandParser
 	// TODO: make status command
 	private static ICommand GetStatusCommand(string inputString)
 	{
-		var args = inputString.Split(' ', 3); 
+		var args = inputString.Split(' ', 3);
 		if (args.Length < 3)
 		{
 			Console.WriteLine("Ошибка: Команда требует индекс задачи и новый статус. Пример: status 0 InProgress");
@@ -319,16 +319,24 @@ internal class CommandParser
 			searchCommand.SetupContains(args[index]);
 		}
 
-		if (args.Contains(CommandSearchFlags[1]))
-		{
+		if (args.Contains(CommandSearchFlags[1])) { 
+			if (i + 1 < parts.Length){
 			int index = Array.IndexOf(args, CommandSearchFlags[1]) + 1;
 			searchCommand.SetupStartWith(args[index]);
-		}
+				i++;
+			}
 
 		if (args.Contains(CommandSearchFlags[2]))
-		{
+			searchCommand.SetupDescending();
+			break;
+				case "--top":
+				if (i + 1 < parts.Length && int.TryParse(parts[i + 1], out int top) && top > 0)
+				{
 			int index = Array.IndexOf(args, CommandSearchFlags[2]) + 1;
 			searchCommand.SetupEndWith(args[index]);
+				}
+				break;
+			}
 		}
 
 		return searchCommand;

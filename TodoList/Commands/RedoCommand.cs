@@ -13,7 +13,7 @@ internal class RedoCommand : ICommand
 
 		ICommand commandToRedo = AppInfo.RedoStack.Pop();
 		commandToRedo.Execute();
-		AppInfo.UndoStack.Push(commandToRedo);
+		AppInfo.UndoPush(commandToRedo);
 	}
 
 	public void Unexecute() { }

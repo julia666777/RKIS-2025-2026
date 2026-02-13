@@ -24,6 +24,7 @@ internal class TodoList
 	//удаление
 	public void Delete(int index)
 	{
+		var item = _items[index];
 		_items.RemoveAt(index);
 		OnTodoDeleted?.Invoke(_items[index]);
 	}

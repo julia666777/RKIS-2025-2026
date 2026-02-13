@@ -8,14 +8,14 @@ namespace TodoList
 
 		public DeleteCommand(int index) : base(index)
 		{
-			_deletedItem = null;
-			AppInfo.UndoPush(this);
+			_deletedItem = AppInfo.CurrentTodoList.GetItem(Index);
+			AppInfo.CurrentTodoList.Delete(Index);
 		}
 
 		protected override void SubExecute(TodoItem item)
 		{
 			_deletedItem = item;
-			AppInfo.CurrentTodoList.Delete(Index);
+			AppInfo.CurrentTodoList.Insert(Index, _deletedItem);
 			Console.WriteLine("Задача успешно удалена");
 		}
 
