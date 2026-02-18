@@ -2,7 +2,7 @@
 namespace TodoList;
 internal class TodoList
 {
-	private List<TodoItem> _items = new List<TodoItem>();
+	private List<TodoItem> _items;
 	public List<TodoItem> Items { get => _items; }
 
 	// Количество задач в списке
@@ -13,6 +13,16 @@ internal class TodoList
 	public event Action<TodoItem>? OnTodoAdded;
 	public event Action<TodoItem>? OnTodoDeleted;
 	public event Action<TodoItem>? OnStatusChanged;
+
+	public TodoList()
+	{
+		_items = new List<TodoItem>();
+	}
+
+	public TodoList(List<TodoItem> list)
+	{
+		_items = list;
+	}
 
 	//добавление задачи
 	public void Add(TodoItem item)

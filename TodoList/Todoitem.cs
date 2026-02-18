@@ -9,6 +9,13 @@ internal class TodoItem
 
 	public DateTime LastUpdate { get; set; }
 
+	public TodoItem(TodoItem reference)
+	{
+		Text = reference.Text;
+		Status = reference.Status;
+		LastUpdate = reference.LastUpdate;
+	}
+
 	public TodoItem(string text)
 	{
 		Text = text;

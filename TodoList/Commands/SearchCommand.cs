@@ -62,39 +62,11 @@ internal class SearchCommand : ICommand
 	public void Execute()
 	{
 		IOrderedEnumerable<TodoItem> selected = GetSelected();
+		TodoList list = new TodoList(selected.ToList());
 
-		Console.WriteLine("================================================");
-
-		// Descriptions
-		{
-			string s = "";
-
-			s += "Index\t";
-			s += "Text\t\t\t\t";
-			s += "Status\t\t";
-			s += "LastUpdate";
-
-			Console.WriteLine(s);
-		}
-
-		// Tasks texts
-		{
-			int index = 0;
-			foreach (var i in selected)
-			{
-
-				if (_topFlag && index >= _topValue)
-					break;
-
-				Console.Write($"{index}\t");
-				Console.Write($"{i.Text}\t");
-				Console.Write($"{i.Status}\t\t");
-				Console.Write($"{i.LastUpdate}\n");
-				index++;
-			}
-		}
-
-		Console.WriteLine("================================================");
+		Console.WriteLine("======================================================");
+		list.View(true, true, true);
+		Console.WriteLine("======================================================");
 	}
 
 	public void Unexecute() { }
