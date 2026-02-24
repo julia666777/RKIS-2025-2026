@@ -19,6 +19,7 @@ internal class CommandParser
 	private const string CommandUndoName = "undo";
 	private const string CommandRedoName = "redo";
 	private const string CommandSearchName = "search";
+	private const string CommandTestName = "test_case";
 
 	private static string[] CommandAddMultilineFlags = new string[]
 	{
@@ -73,6 +74,7 @@ internal class CommandParser
 		_commandHandlers["update"] = ParseUpdate;
 		_commandHandlers["view"] = ParseView;
 		_commandHandlers["search"] = ParseSearch;
+		_commandHandlers["test_case"] = ParseTestCase;
 	}
 
 	public static ICommand Parse(string inputString)
@@ -91,6 +93,12 @@ internal class CommandParser
 		// Если команда не найдена - парс как команду с индексом
 		return ParseUnknownCommand(inputString);
 	}
+
+	private static ICommand ParseTestCase(string arg)
+	{
+		return new TestCommand();
+	}
+
 	private static ICommand ParseAdd(string arguments)
 	{
 		bool multiline = false;
@@ -152,8 +160,11 @@ internal class CommandParser
 		else if (CompareCommand(inputString, CommandUpdateName)) return GetUpdateCommand(inputString);
 		else if (CompareCommand(inputString, CommandReadName)) return GetReadCommand(inputString);
 		else if (CompareCommand(inputString, CommandSearchName)) return GetSearchCommand(inputString);
+		else if (CompareCommand(inputString, CommandTestName)) return GetTestCommand();
 		return new NoneCommand();
 	}
+
+	private static ICommand GetTestCommand() => new TestCommand();
 
 	private static bool CompareCommand(string inputString, string commandName) => inputString.StartsWith(commandName);
 

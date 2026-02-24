@@ -72,7 +72,7 @@ public class Program
 			EnterExistProfile();
 	}
 
-	private static void EnterProfile()
+	public static void EnterProfile()
 	{
 		Console.WriteLine("Войти в существующий профиль? [y/n]");
 		var answer = Console.ReadLine();
