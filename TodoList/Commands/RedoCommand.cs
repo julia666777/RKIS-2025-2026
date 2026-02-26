@@ -16,5 +16,4 @@ internal class RedoCommand : ICommand
 		AppInfo.UndoPush(commandToRedo);
 	}
 
-	public void Unexecute() { }
 }

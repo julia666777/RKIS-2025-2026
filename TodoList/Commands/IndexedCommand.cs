@@ -19,10 +19,4 @@ internal abstract class IndexedCommand : ICommand
 
 	// Don't check for NULL, this item is guaranteed not to be NULL
 	protected abstract void SubExecute(TodoItem item);
-	protected abstract void SubUnExecute();
-
-	public void Unexecute()
-	{
-		SubUnExecute();
-	}
 }

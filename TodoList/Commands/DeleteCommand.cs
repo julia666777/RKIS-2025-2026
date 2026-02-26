@@ -2,7 +2,7 @@
 
 namespace TodoList
 {
-	internal class DeleteCommand : IndexedCommand
+	internal class DeleteCommand : IndexedCommand, IRedo
 	{
 		private TodoItem _deletedItem;
 
@@ -19,7 +19,7 @@ namespace TodoList
 		}
 
 		// Not need
-		protected override void SubUnExecute()
+		public void Unexecute()
 		{
 			AppInfo.CurrentTodoList.Add(new TodoItem(_deletedItem));
 			Console.WriteLine("Удаление задачи отменено");

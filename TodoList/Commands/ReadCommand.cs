@@ -10,6 +10,4 @@ internal class ReadCommand : IndexedCommand
 		Console.WriteLine("\n" + item.GetFullInfo());
 	}
 
-	protected override void SubUnExecute() {}
-
 }

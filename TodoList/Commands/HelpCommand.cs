@@ -22,6 +22,5 @@ namespace TodoList
 				"""); 
 		}
 
-		public void Unexecute() { }
 	}
 }

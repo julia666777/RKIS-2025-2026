@@ -1,6 +1,6 @@
 ﻿
 namespace TodoList.Commands;
-internal class StatusCommand : ICommand
+internal class StatusCommand : ICommand, IRedo
 {
     private readonly int _index;
     private TodoStatus _status, _prevStatus;
@@ -36,6 +36,5 @@ internal class StatusCommand : ICommand
 		Console.WriteLine("Изменение статуса отменено.");
 	}
 
-	public bool PossibleToUndo() => true;
 
 }

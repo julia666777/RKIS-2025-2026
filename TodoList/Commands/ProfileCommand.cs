@@ -26,7 +26,6 @@ internal class ProfileCommand : ICommand
 		}
 	}
 
-	public void Unexecute() { }
 }
 
 

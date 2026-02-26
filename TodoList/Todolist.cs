@@ -36,7 +36,7 @@ internal class TodoList
 	{
 		var item = _items[index];
 		_items.RemoveAt(index);
-		OnTodoDeleted?.Invoke(_items[index]);
+		OnTodoDeleted?.Invoke(item);
 	}
 
 	public void View(bool showIndex, bool showDone, bool showDate)

@@ -1,6 +1,6 @@
 ﻿
 namespace TodoList;
-internal class UpdateCommand : IndexedCommand
+internal class UpdateCommand : IndexedCommand, IRedo
 {
 	private string _task;
 	private string _prevTask;
@@ -22,7 +22,7 @@ internal class UpdateCommand : IndexedCommand
 		Console.WriteLine($"Задача под номером {Index} изменена на \"{_task}\".");
 	}
 
-	protected override void SubUnExecute()
+	public void Unexecute()
 	{
 		_targetItem.UpdateText(_prevTask);
 		Console.WriteLine($"Задача под номером {Index} восстановлена на \"{_prevTask}\".");

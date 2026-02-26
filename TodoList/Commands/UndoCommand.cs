@@ -7,11 +7,14 @@ internal class UndoCommand : ICommand
 	{
 		if (AppInfo.UndoStack.TryPeek(out var command))
 		{
-			AppInfo.RedoPush(command);
-			AppInfo.UndoPop();
-			command.Unexecute();
+			if (command is IRedo)
+			{
+				AppInfo.RedoPush(command);
+				AppInfo.UndoPop();
+				IRedo redo = (IRedo)command;
+				redo.Unexecute();
+			}
 		}
 	}
 
-	public void Unexecute() { }
 }

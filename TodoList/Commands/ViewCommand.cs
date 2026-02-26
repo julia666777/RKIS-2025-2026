@@ -21,5 +21,4 @@ internal class ViewCommand : ICommand
 		Console.WriteLine("===========================================================");
 	}
 
-	public void Unexecute() { }
 }

@@ -1,6 +1,6 @@
 ﻿
 namespace TodoList;
-internal class AddCommand : ICommand
+internal class AddCommand : ICommand, IRedo
 {
 	private bool _multiline;
 	public string Task { get; private set; }

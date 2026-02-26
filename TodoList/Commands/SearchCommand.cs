@@ -69,5 +69,4 @@ internal class SearchCommand : ICommand
 		Console.WriteLine("======================================================");
 	}
 
-	public void Unexecute() { }
 }

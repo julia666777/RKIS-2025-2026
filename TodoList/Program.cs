@@ -21,8 +21,7 @@ public class Program
 			var commandLine = Console.ReadLine();
 			var command = CommandParser.Parse(commandLine);
 			command.Execute();
-			if ((command is DeleteCommand || command is IndexedCommand || command is ReadCommand ||
-				  command is StatusCommand || command is UpdateCommand))
+			if ((command is IRedo))
 			{
 				AppInfo.RedoStack.Clear();
 			}

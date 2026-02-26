@@ -114,9 +114,9 @@ internal class CommandParser
 		}
 		if (!multiline)
 		{
-			if (userEnteredTask.Length > 0 && IsTaskValidToAdd(userEnteredTask[0]))
+			if (userEnteredTask.Length > 0 && IsTaskValidToAdd(arguments))
 			{
-				return new AddCommand(multiline, userEnteredTask[0]);
+				return new AddCommand(multiline, arguments);
 			}
 			else return GetUncorrect();
 		}
