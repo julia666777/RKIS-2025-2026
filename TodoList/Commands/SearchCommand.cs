@@ -13,7 +13,6 @@ internal class SearchCommand : ICommand
 	private bool _isStatusFlag = false;
 	private TodoStatus _status = TodoStatus.NotStarted;
 
-	private bool _sortText = false;
 	private bool _sortDate = false;
 	private bool _sortDesc = false;
 
@@ -44,17 +43,47 @@ internal class SearchCommand : ICommand
 
 	private IOrderedEnumerable<TodoItem> GetSelected()
 	{
-		// TODO: ordering by flags
-		IOrderedEnumerable<TodoItem> selected = from c in AppInfo.CurrentTodoList.Items
-												where
-												 (_startWith == "" || c.Text.StartsWith(_startWith)) &&
-												  (_conteins == "" || c.Text.Contains(_conteins)) &&
-												  (_endWith == "" || c.Text.EndsWith(_endWith)) &&
-												  c.LastUpdate.Date >= _fromDate.Date &&
-												  c.LastUpdate.Date <= _toDate.Date &&
-												CheckStatus(c)
-												orderby c.Text
-												select c;
+		IOrderedEnumerable<TodoItem> selected;
+
+		if (_sortDate)
+		{
+			selected = from c in AppInfo.CurrentTodoList.Items
+					   where
+					   (_startWith == "" || c.Text.StartsWith(_startWith)) &&
+					   (_conteins == "" || c.Text.Contains(_conteins)) &&
+					   (_endWith == "" || c.Text.EndsWith(_endWith)) &&
+					   c.LastUpdate.Date >= _fromDate.Date &&
+					   c.LastUpdate.Date <= _toDate.Date &&
+					   CheckStatus(c)
+					   orderby c.LastUpdate
+					   select c;
+		}
+		else if (_sortDesc)
+		{
+			selected = from c in AppInfo.CurrentTodoList.Items
+					   where
+					   (_startWith == "" || c.Text.StartsWith(_startWith)) &&
+					   (_conteins == "" || c.Text.Contains(_conteins)) &&
+					   (_endWith == "" || c.Text.EndsWith(_endWith)) &&
+					   c.LastUpdate.Date >= _fromDate.Date &&
+					   c.LastUpdate.Date <= _toDate.Date &&
+					   CheckStatus(c)
+					   orderby c.Text descending
+					   select c;
+		}
+		else
+		{
+			selected = from c in AppInfo.CurrentTodoList.Items
+					   where
+					   (_startWith == "" || c.Text.StartsWith(_startWith)) &&
+					   (_conteins == "" || c.Text.Contains(_conteins)) &&
+					   (_endWith == "" || c.Text.EndsWith(_endWith)) &&
+					   c.LastUpdate.Date >= _fromDate.Date &&
+					   c.LastUpdate.Date <= _toDate.Date &&
+					   CheckStatus(c)
+					   orderby c.Text
+					   select c;
+		}
 
 		return selected;
 	}
