@@ -33,23 +33,30 @@ internal class FileManager
 
 	public static Profile LoadProfile(string filePath)
 	{
-		if (!File.Exists(filePath))
+		try
+		{
+			if (!File.Exists(filePath))
+				throw new Exception($"{filePath} profile file not exist.");
+
+			string[] lines = File.ReadAllLines(filePath);
+			if (lines.Length < 3)
+				throw new Exception("Uncorrect profile file format.");
+
+			Profile profile = new Profile();
+			profile.FirstName = lines[0];
+			profile.LastName = lines[1];
+
+			if (!int.TryParse(lines[2], out int year))
+				throw new Exception("Failed to parse profile.");
+
+			profile.BirthYear = year;
+
+			return profile;
+		} catch(Exception e)
+		{
+			Console.WriteLine(e.ToString());
 			return null;
-
-		string[] lines = File.ReadAllLines(filePath);
-		if (lines.Length < 3)
-			return null;
-
-		Profile profile = new Profile();
-		profile.FirstName = lines[0];
-		profile.LastName = lines[1];
-
-		if (!int.TryParse(lines[2], out int year))
-			return null;
-
-		profile.BirthYear = year;
-
-		return profile;
+		}
 	}
 
 	public static bool LoadProfiles(string filePath, out List<Profile> profile)
@@ -111,36 +118,44 @@ internal class FileManager
 
 	public static TodoList LoadTodos(string filePath)
 	{
-		if (!File.Exists(filePath))
-			return null;
-
-		var lines = File.ReadAllLines(filePath);
-		TodoList list = new TodoList();
-
-		foreach (var line in lines)
+		try
 		{
-			var args = line.Split(';', 3);
-			if (args.Length > 2)
+			if (!File.Exists(filePath))
+				throw new Exception($"{filePath} is not exist.");
+
+			var lines = File.ReadAllLines(filePath);
+			TodoList list = new TodoList();
+
+			foreach (var line in lines)
 			{
-				TodoStatus status;
-				if (!Enum.TryParse(args[0], true, out status))
+				var args = line.Split(';', 3);
+				if (args.Length > 2)
 				{
-					Console.WriteLine($"Предупреждение: Не удалось разобрать статус '{args[0]}'. Использование NotStarted.");
-					status = TodoStatus.NotStarted; // Дефолт. статус в случае ошибки
+					TodoStatus status;
+					if (!Enum.TryParse(args[0], true, out status))
+					{
+						Console.WriteLine($"Предупреждение: Не удалось разобрать статус '{args[0]}'. Использование NotStarted.");
+						status = TodoStatus.NotStarted; // Дефолт. статус в случае ошибки
+					}
+
+					var date = DateTime.Now;
+					DateTime.TryParse(args[1], out date);
+
+					var text = args[2];
+
+					TodoItem item = new TodoItem(ParseFileText(text));
+					item.Status = status;
+					item.LastUpdate = date;
+					list.Add(item);
 				}
-
-				var date = DateTime.Now;
-				DateTime.TryParse(args[1], out date);
-
-				var text = args[2];
-
-				TodoItem item = new TodoItem(ParseFileText(text));
-				item.Status = status;
-				item.LastUpdate = date;
-				list.Add(item);
 			}
+			return list;
 		}
-		return list;
+		catch (Exception e)
+		{
+			Console.WriteLine(e.ToString());
+			return null;
+		}
 	}
 
 	public static void SaveProfiles(string pathToSaves)
